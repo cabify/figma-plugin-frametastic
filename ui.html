@@ -10,7 +10,7 @@
     .variations { list-style: none; }
         .stand-run { border-top: solid 1px rgba(0, 0, 0, 0.1); color: #18a0fb; }
         .variation-item { position: relative; display: block; box-sizing: padding-box; width: 100%; padding: 8px 8px 8px 0; border-bottom: solid 1px rgba(0, 0, 0, 0.1); text-align: left; }
-            .variation-preview { position: absolute; top: 4px; right: 8px; border: solid 1px rgba(0, 0, 0, 0.1); background: rgba(0, 0, 0, 0.05); }
+            .variation-preview { position: absolute; top: 4px; right: 8px; transform-origin: right top; transform: scale(0.5); border: solid 1px rgba(0, 0, 0, 0.1); background: rgba(0, 0, 0, 0.05); }
 </style>
 
 <section class="boutique">
@@ -21,9 +21,9 @@
             <div class="disclosure__content">
                 <button class="type--pos-small-normal variation-item stand-run" data-trigger="run-stand" data-stand="0">Run all variations</button>
                 <ul class="variations">
-                    <li class="variation-item" data-trigger="run-variation" data-variation="0">
-                        <p class='type type--pos-small-normal'>360 x 640<p>
-                        <span class="variation-preview"></span>
+                    <li class="variation-item" data-trigger="run-variation" data-stand="0" data-variation="0">
+                        <em class='type type--pos-small-normal'>320 x 360</em>
+                        <span class="variation-preview" style="width: 32px; height: 36px;"></span>
                     </li>
                 </ul>
             </div>
@@ -39,13 +39,16 @@
 
     document.querySelectorAll('[data-trigger=run-stand]').forEach(item => {
 	    item.onclick = () => {
-			parent.postMessage({ pluginMessage: { type: 'run-stand' } }, '*')
+			let standId = item.getAttribute('data-stand')
+	    	parent.postMessage({ pluginMessage: { type: 'run-stand', standId: parseInt(standId) } }, '*')
 		}
     })
 
 	document.querySelectorAll('[data-trigger=run-variation]').forEach(item => {
 		item.onclick = () => {
-			parent.postMessage({ pluginMessage: { type: 'run-variation' } }, '*')
+			let standId = item.getAttribute('data-stand')
+			let variationId = item.getAttribute('data-variation')
+			parent.postMessage({ pluginMessage: { type: 'run-variation', variationId: parseInt(variationId), standId: parseInt(standId) } }, '*')
 		}
 	})
 
