@@ -19,16 +19,18 @@ figma.ui.onmessage = msg => {
     }
 
     if (msg.type === 'run-stand') {
-        let id = msg.id
-        createStand(source, id)
+        alert('run stand')
+        // let id = msg.id
+        // createStand(source, id)
     }
 
     if (msg.type === 'run-variation') {
-        let id = msg.id
-        let {width, height} = getSavedVariation(id)
-        let source = figma.currentPage.selection
-        createVariation(source, width, height)
+        alert('run variation')
+        // let id = msg.id
+        // let {width, height} = getSavedVariation(id)
+        // let source = figma.currentPage.selection
+        // createVariation(source, width, height)
     }
 
-    figma.closePlugin();
+    // figma.closePlugin();
 };
