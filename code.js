@@ -34,7 +34,7 @@ function getSavedVariation(standId, variationId) {
 }
 
 // Get saved config and render UI
-figma.showUI(__html__)
+figma.showUI(__html__, {width: 320, height: 480})
 var boutique = getSavedBoutique()
 figma.ui.postMessage({ type: 'render', boutique: boutique })
 
