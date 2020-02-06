@@ -14,7 +14,8 @@ html, body{ min-height: 100%; height: 100%; }
                 .stand-run * { pointer-events: none; }
             .variation-item { position: relative; display: block; box-sizing: padding-box; width: 100%; padding: 8px 8px 8px 0; border-bottom: solid 1px rgba(0, 0, 0, 0.1); text-align: left; }
                 .variation-item * { pointer-events: none; }
-                .variation-preview { position: absolute; top: 4px; right: 8px; transform-origin: right top; transform: scale(0.5); border: solid 1px rgba(0, 0, 0, 0.1); background: rgba(0, 0, 0, 0.05); }
+                .variation-preview-wrapper { position: absolute; top: 4px; right: 8px; width: 24px; height: 24px; display: flex; }
+                    .variation-preview { border: solid 1px rgba(0, 0, 0, 0.1); background: rgba(0, 0, 0, 0.05); display: block }
 </style>
 
 <section class="boutique">
@@ -25,10 +26,24 @@ html, body{ min-height: 100%; height: 100%; }
 <script>
 
     function variationTemplate(standId, variationId, variation) {
+
+    	if (variation.width > variation.height) {
+			var widthPreview = variation.width
+			var heightPreview = (variation.height / variation.width) * 100
+        } else
+        if (variation.width < variation.height ) {
+			var widthPreview = variation.width
+			var heightPreview = (variation.height / variation.width) * 100
+        } else {
+			var widthPreview = variation.width
+			var heightPreview = (variation.height / variation.width) * 100
+        }
+
+        console.log(widthPreview, heightPreview)
     	return `
         <li class="variation-item" data-trigger="run-variation" data-stand="${standId}" data-variation="${variationId}">
             <em class='type type--pos-small-normal'>${variation.width} x ${variation.height}</em>
-            <span class="variation-preview" style="width: 32px; height: 36px;"></span>
+            <span class="variation-preview-wrapper"><i class="variation-preview" style="width: ${widthPreview}%; height: ${heightPreview}%;"></i></span>
         </li>
     	`
     }
