@@ -1,5 +1,3 @@
-figma.showUI(__html__);
-
 const X_SPACING = 100
 
 let DB = [
@@ -23,6 +21,10 @@ function createVariation(node, width, height, offset) {
     clone.y = node.y
 }
 
+function getSavedBoutique() {
+    return DB
+}
+
 function getSavedStand(standId) {
     return DB[standId]
 }
@@ -31,7 +33,13 @@ function getSavedVariation(standId, variationId) {
     return getSavedStand(standId).variations[variationId]
 }
 
+// Get saved config and render UI
+figma.showUI(__html__)
+var boutique = getSavedBoutique()
+figma.ui.postMessage({ type: 'render', boutique: boutique })
 
+
+// Listen for actions in the UI
 figma.ui.onmessage = msg => {
 
     if (msg.type === 'run-stand') {
