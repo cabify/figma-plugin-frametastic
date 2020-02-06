@@ -2,7 +2,7 @@ const X_SPACING = 100
 
 let DB = [
     { name: 'Android', variations: [{ width: 320, height: 360 }, { width: 360, height: 360 }] },
-    { name: 'Banners', variations: [{ width: 540, height: 720 }, { width: 240, height: 480 }] }
+    { name: 'Banners', variations: [{ width: 540, height: 720 }, { width: 240, height: 480 }, { width: 600, height: 200 }, { width: 400, height: 400 }] }
 ]
 
 function createStand(node, id) {
@@ -10,7 +10,7 @@ function createStand(node, id) {
     let offset = 0
     stand.variations.forEach((variation, index) => {
         createVariation(node, variation.width, variation.height, offset)
-        offset = variation.width + X_SPACING
+        offset += variation.width + X_SPACING
     })
 }
 
