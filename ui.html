@@ -48,6 +48,16 @@ html, body{ min-height: 100%; height: 100%; }
         .ml-4 {
             margin-left: var(--m-4);
         }
+    
+    .flex {
+        display: flex;
+    }
+
+    .inline-flex {
+        display: inline-flex;
+    }
+
+    /* Class */
     .action { font-size: 0; line-height: 0; }
 
     .disclosure__content {
@@ -59,13 +69,18 @@ html, body{ min-height: 100%; height: 100%; }
         .variations { list-style: none; }
             .stand-run { border-top: solid 1px rgba(0, 0, 0, 0.1); color: #18a0fb; }
                 .stand-run * { pointer-events: none; }
-            .variation-item { position: relative; display: flex; align-items: center; justify-content: start; box-sizing: padding-box; width: 100%; padding: 8px 8px 8px 0; border-bottom: solid 1px rgba(0, 0, 0, 0.1); text-align: left; }
+            .variation-item { position: relative; display: flex; align-items: center; justify-content: start; box-sizing: padding-box; width: 100%; padding: 8px; border-top: solid 1px rgba(0, 0, 0, 0.1); text-align: left; }
             .variation-item:hover { background: rgba(0, 0, 0, 0.025); }
                 .variation-item * { pointer-events: none; }
                 .variation-item:last-child { border-bottom: none; }
                 .variation-preview-wrapper { width: 24px; height: 24px; flex-shrink: 0; flex-grow: 0; display: flex; align-items: center; justify-content: center; margin-right: 8px; }
             .variation-preview { border: solid 1px rgba(0, 0, 0, 0.1); background: rgba(0, 0, 0, 0.05); display: block }
-                .variation-resolution { font-style: normal; flex-grow: 1; }
+                .variation-resolution { font-style: normal; flex-grow: 1;}
+                    .variation-resolution input {
+                        width: 50px;
+                        display: inline;
+                        pointer-events: auto;
+                    }
                 .variation-item .action { pointer-events: auto; flex-shrink: 0; flex-grow: 0; margin-left: 8px; }
 
 </style>
@@ -75,6 +90,47 @@ html, body{ min-height: 100%; height: 100%; }
     <button data-trigger="export" class="icon icon--align-top icon--button action export">Export</button>
     <button data-trigger="dump" class="icon icon--trash icon--button action dump">Remove all</button>
     <ul data-render="stands" class="disclosure stands"></ul>
+        <ul>
+            <li class="disclosure__item stand-item disclosure--expanded">
+                <div class="disclosure__label disclosure--section">Banners</div>
+                <div class="disclosure__content">
+                    <button class="type--pos-small-normal variation-item stand-run" data-trigger="run-stand" data-stand="1">Run all variations</button>
+                    <ul class="variations">   
+                        <li class="variation-item edit" data-trigger="run-variation" data-stand="1" data-variation="0">
+                            <span class="variation-preview-wrapper"><i class="variation-preview" style="width:75.00000000000001%; height:100%;"></i></span>
+                            <div class="type type--pos-medium-normal variation-resolution">
+                                <input type="input" class="input" placeholder="540">
+                                <span class="ml-8 mr-8">x</span>
+                                <input type="input" class="input" placeholder="720">
+                            </div>
+                            <button data-trigger="remove-variation" data-stand="1" data-variation="0" class="icon icon--trash icon--button action variation-remove">Remove</button>
+                            <button data-trigger="edit-variation" data-stand="1" data-variation="0" class="icon icon--resolve icon--button action variation-remove">Edit</button>
+                        </li>  
+                        <li class="variation-item" data-trigger="run-variation" data-stand="1" data-variation="0">
+                            <span class="variation-preview-wrapper"><i class="variation-preview" style="width:75.00000000000001%; height:100%;"></i></span>
+                            <div class="type type--pos-medium-normal variation-resolution">
+                                540 x 720
+                            </div>
+                            <button data-trigger="edit-variation" data-stand="1" data-variation="0" class="icon icon--adjust icon--button action variation-remove">Edit</button>
+                            <!--button data-trigger="remove-variation" data-stand="1" data-variation="0" class="icon icon--trash icon--button action variation-remove">Remove</button-->
+                        </li>         
+                    </ul>
+                </div>
+            </li>
+        </ul>
+    <section class="boutique-import">
+        <textarea rows="2" class="boutique-import textarea">Some text inside a textarea</textarea>
+        <div class="boutique-import float-right m-8">
+            <button class='button button--secondary'>Cancel</button>
+            <button class='button button--primary ml-8'>Import</button>
+        </div>
+    </section>
+    <section class="boutique-export">
+        <textarea rows="2" class="boutique-import textarea">Some text inside a textarea</textarea>
+        <div class="boutique-import float-right m-8">
+            <button class='button button--primary'>Copy</button>
+        </div>
+    </section>
 </section>
 
 <section data-node="import-form" class="view form boutique-import hidden">
