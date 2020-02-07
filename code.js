@@ -57,5 +57,14 @@ figma.ui.onmessage = msg => {
         })
     }
 
+    if (msg.type === 'request-import') {
+        console.log('code.js import')
+    }
+
+
+    if (msg.type === 'request-export') {
+        console.log('code.js export')
+    }
+
     // figma.closePlugin();
 };
