@@ -40,6 +40,12 @@ function getSavedVariation(standId, variationId) {
     return stand.variations[variationId]
 }
 
+function removeVariation(standId, variationId) {
+    let boutique = getSavedBoutique()
+    boutique[standId].variations.splice(variationId, 1)
+    saveBoutique(JSON.stringify(boutique))
+}
+
 function renderFromSavedState() {
     var boutique = getSavedBoutique()
     if (boutique.length === 0) {
@@ -86,6 +92,15 @@ figma.ui.onmessage = msg => {
     if (msg.type === 'request-dump') {
         saveBoutique('')
         renderFromSavedState()
+    }
+
+    if (msg.type === 'remove-variation') {
+        removeVariation(msg.standId, msg.variationId)
+        renderFromSavedState()
+    }
+
+    if (msg.type === 'edit-variation') {
+        console.log('edit variation', msg)
     }
 
     // figma.closePlugin();

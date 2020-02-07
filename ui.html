@@ -47,7 +47,7 @@ html, body{ min-height: 100%; height: 100%; }
         .ml-4 {
             margin-left: var(--m-4);
         }
-    .import, .export { font-size: 0; line-height: 0; }
+    .action { font-size: 0; line-height: 0; }
 
     .disclosure__content {
         padding-top: 0px;
@@ -58,17 +58,21 @@ html, body{ min-height: 100%; height: 100%; }
         .variations { list-style: none; }
             .stand-run { border-top: solid 1px rgba(0, 0, 0, 0.1); color: #18a0fb; }
                 .stand-run * { pointer-events: none; }
-            .variation-item { position: relative; display: block; box-sizing: padding-box; width: 100%; padding: 8px; border-bottom: solid 1px rgba(0, 0, 0, 0.1); text-align: left; }
+            .variation-item { position: relative; display: flex; align-items: center; justify-content: start; box-sizing: padding-box; width: 100%; padding: 8px 8px 8px 0; border-bottom: solid 1px rgba(0, 0, 0, 0.1); text-align: left; }
+            .variation-item:hover { background: rgba(0, 0, 0, 0.025); }
                 .variation-item * { pointer-events: none; }
                 .variation-item:last-child { border-bottom: none; }
-                .variation-preview-wrapper { position: absolute; top: 4px; right: 8px; width: 24px; height: 24px; display: flex; align-items: center; justify-content: center;}
-                    .variation-preview { border: solid 1px rgba(0, 0, 0, 0.1); background: rgba(0, 0, 0, 0.05); display: block }
+                .variation-preview-wrapper { width: 24px; height: 24px; flex-shrink: 0; flex-grow: 0; display: flex; align-items: center; justify-content: center; margin-right: 8px; }
+            .variation-preview { border: solid 1px rgba(0, 0, 0, 0.1); background: rgba(0, 0, 0, 0.05); display: block }
+                .variation-resolution { font-style: normal; flex-grow: 1; }
+                .variation-item .action { pointer-events: auto; flex-shrink: 0; flex-grow: 0; margin-left: 8px; }
+
 </style>
 
 <section class="boutique">
-    <button data-trigger="import" class="icon icon--align-bottom icon--button import">Import</button>
-    <button data-trigger="export" class="icon icon--align-top icon--button export">Export</button>
-    <button data-trigger="dump" class="icon icon--trash icon--button export">Remove all</button>
+    <button data-trigger="import" class="icon icon--align-bottom icon--button action import">Import</button>
+    <button data-trigger="export" class="icon icon--align-top icon--button action export">Export</button>
+    <button data-trigger="dump" class="icon icon--trash icon--button action dump">Remove all</button>
     <ul data-render="stands" class="disclosure stands"></ul>
     <section class="boutique-import">
         <textarea rows="2" class="boutique-import textarea">Some text inside a textarea</textarea>
@@ -111,8 +115,10 @@ html, body{ min-height: 100%; height: 100%; }
 
     	return `
         <li class="variation-item" data-trigger="run-variation" data-stand="${standId}" data-variation="${variationId}">
-            <em class='type type--pos-small-normal'>${variation.width} x ${variation.height}</em>
             <span class="variation-preview-wrapper"><i class="variation-preview" style="width:${width}%; height:${height}%;"></i></span>
+            <em class='type type--pos-medium-normal variation-resolution'>${variation.width} x ${variation.height}</em>
+            <button data-trigger="edit-variation" data-stand="${standId}" data-variation="${variationId}" class="icon icon--adjust icon--button action variation-remove">Edit</button>
+            <button data-trigger="remove-variation" data-stand="${standId}" data-variation="${variationId}" class="icon icon--trash icon--button action variation-remove">Remove</button>
         </li>
     	`
     }
@@ -194,5 +200,22 @@ html, body{ min-height: 100%; height: 100%; }
 			let variationId = e.target.getAttribute('data-variation')
 			parent.postMessage({ pluginMessage: { type: 'run-variation', variationId: parseInt(variationId), standId: parseInt(standId) } }, '*')
 		}
+
+		if (trigger === 'remove-variation') {
+			let standId = e.target.getAttribute('data-stand')
+			let variationId = e.target.getAttribute('data-variation')
+			parent.postMessage({ pluginMessage: { type: 'remove-variation', variationId: parseInt(variationId), standId: parseInt(standId) } }, '*')
+		}
+
+		if (trigger === 'edit-variation') {
+			let standId = e.target.getAttribute('data-stand')
+			let variationId = e.target.getAttribute('data-variation')
+            // Show edit UI to obtain new width, height then send edit-variation message on confirm
+            let width = 100
+			let height = 100
+			parent.postMessage({ pluginMessage: { type: 'edit-variation', variationId: parseInt(variationId), standId: parseInt(standId), width: width, height: height } }, '*')
+		}
+
+
     }
 </script>
