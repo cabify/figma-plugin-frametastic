@@ -1,24 +1,61 @@
-// This plugin will open a modal to prompt the user to enter a number, and
-// it will then create that many rectangles on the screen.
+const X_SPACING = 100
 
-// This file holds the main code for the plugins. It has access to the *document*.
-// You can access browser APIs in the <script> tag inside "ui.html" which has a
-// full browser enviroment (see documentation).
+let DB = [
+    { name: 'Android', variations: [{ width: 320, height: 360 }, { width: 360, height: 360 }] },
+    { name: 'Banners', variations: [{ width: 540, height: 720 }, { width: 240, height: 480 }, { width: 600, height: 200 }, { width: 400, height: 400 }] }
+]
 
-// This shows the HTML page in "ui.html".
-figma.showUI(__html__);
+function createStand(node, id) {
+    let stand = getSavedStand(id)
+    let offset = 0
+    stand.variations.forEach((variation, index) => {
+        createVariation(node, variation.width, variation.height, offset)
+        offset += variation.width + X_SPACING
+    })
+}
 
-// Calls to "parent.postMessage" from within the HTML page will trigger this
-// callback. The callback will be passed the "pluginMessage" property of the
-// posted message.
+function createVariation(node, width, height, offset) {
+    let clone = (node.type === 'COMPONENT') ? node.createInstance() : node.clone();
+    clone.resize(width, height)
+    clone.x = node.x + node.width + X_SPACING + (offset || 0)
+    clone.y = node.y
+}
+
+function getSavedBoutique() {
+    return DB
+}
+
+function getSavedStand(standId) {
+    return DB[standId]
+}
+
+function getSavedVariation(standId, variationId) {
+    return getSavedStand(standId).variations[variationId]
+}
+
+// Get saved config and render UI
+figma.showUI(__html__, {width: 320, height: 480})
+var boutique = getSavedBoutique()
+figma.ui.postMessage({ type: 'render', boutique: boutique })
+
+
+// Listen for actions in the UI
 figma.ui.onmessage = msg => {
-// One way of distinguishing between different types of messages sent from
-// your HTML page is to use an object with a "type" property like this.
-    if (msg.type === 'message-name') {
-        alert('trigger')
+
+    if (msg.type === 'run-stand') {
+        let source = figma.currentPage.selection
+        source.forEach(node => {
+            createStand(node, msg.standId)
+        })
     }
 
-// Make sure to close the plugin when you're done. Otherwise the plugin will
-// keep running, which shows the cancel button at the bottom of the screen.
-    figma.closePlugin();
+    if (msg.type === 'run-variation') {
+        let source = figma.currentPage.selection
+        let variation = getSavedVariation(msg.standId, msg.variationId)
+        source.forEach(node => {
+            createVariation(node, variation.width, variation.height)
+        })
+    }
+
+    // figma.closePlugin();
 };
