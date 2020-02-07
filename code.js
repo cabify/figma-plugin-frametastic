@@ -88,5 +88,13 @@ figma.ui.onmessage = msg => {
         renderFromSavedState()
     }
 
+    if (msg.type === 'remove-variation') {
+        console.log('remove variation', msg)
+    }
+
+    if (msg.type === 'edit-variation') {
+        console.log('edit variation', msg)
+    }
+
     // figma.closePlugin();
 };
