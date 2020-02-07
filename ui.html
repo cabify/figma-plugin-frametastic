@@ -99,25 +99,31 @@ html, body{ min-height: 100%; height: 100%; }
     	return document.querySelector(`[data-node="stand"][data-stand="${standId}"]`).querySelector(`[data-node="variation"][data-variation="${variationId}"]`)
     }
 
+    function getVariationRatio(vwidth, vheight) {
+		const maxWidth = 100;
+		const maxHeight = 100;
+		let ratio = 0;
+		let width = vwidth;
+		let height = vheight;
+
+		if (width > maxWidth) {
+			ratio = maxWidth / width;
+			width = maxWidth;
+			height = height * ratio;
+		}
+
+		if (height > maxHeight){
+			ratio = maxHeight / height;
+			height = maxHeight;
+			width = width * ratio;
+		}
+
+		return {width, height}
+    }
+
     function variationTemplate(standId, variationId, variation) {
 
-        const maxWidth = 100;
-        const maxHeight = 100;
-        let ratio = 0;
-        let width = variation.width;
-        let height = variation.height;
-
-        if (width > maxWidth) {
-            ratio = maxWidth / width;
-            width = maxWidth;
-            height = height * ratio;
-        }
-
-        if (height > maxHeight){
-            ratio = maxHeight / height;
-            height = maxHeight;
-            width = width * ratio;
-        }
+        let {width, height} = getVariationRatio(variation.width, variation.height)
 
     	return `
         <li class="variation-item" data-trigger="run-variation" data-stand="${standId}" data-variation="${variationId}" data-node="variation">
