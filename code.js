@@ -86,7 +86,8 @@ figma.ui.onmessage = msg => {
     }
 
     if (msg.type === 'request-export') {
-        console.log('code.js export')
+        let boutique = getSavedBoutique()
+        figma.ui.postMessage({ type: 'export-data', data: boutique })
     }
 
     if (msg.type === 'request-dump') {
