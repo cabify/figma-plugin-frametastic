@@ -24,6 +24,7 @@ html, body{ min-height: 100%; height: 100%; }
 <section class="boutique">
     <button data-trigger="import" class="icon icon--align-bottom icon--button import">Import</button>
     <button data-trigger="export" class="icon icon--align-top icon--button export">Export</button>
+    <button data-trigger="dump" class="icon icon--trash icon--button export">Remove all</button>
     <ul data-render="stands" class="disclosure stands"></ul>
 </section>
 
@@ -33,8 +34,8 @@ html, body{ min-height: 100%; height: 100%; }
 
     function variationTemplate(standId, variationId, variation) {
 
-        const maxWidth = 24;
-        const maxHeight = 24;
+        const maxWidth = 100;
+        const maxHeight = 100;
         let ratio = 0;
         let width = variation.width;
         let height = variation.height;
@@ -51,11 +52,10 @@ html, body{ min-height: 100%; height: 100%; }
             width = width * ratio;
         }
 
-        console.log(width, height)
     	return `
         <li class="variation-item" data-trigger="run-variation" data-stand="${standId}" data-variation="${variationId}">
             <em class='type type--pos-small-normal'>${variation.width} x ${variation.height}</em>
-            <span class="variation-preview-wrapper"><i class="variation-preview" style="width:${width}px; height:${height}px;"></i></span>
+            <span class="variation-preview-wrapper"><i class="variation-preview" style="width:${width}%; height:${height}%;"></i></span>
         </li>
     	`
     }
@@ -75,9 +75,11 @@ html, body{ min-height: 100%; height: 100%; }
     }
 
 
-    // Render plugin UI
+    // Listen to messages from core
     onmessage = e => {
     	let msg = event.data.pluginMessage
+
+		// Render plugin UI
         if (msg.type === 'render') {
         	let standsBuffer = ''
             msg.boutique.forEach((stand, standId) => {
@@ -98,20 +100,28 @@ html, body{ min-height: 100%; height: 100%; }
 		}
 
         if (msg.type === 'empty') {
-
+            console.log('No boutique data stored, show an empty state')
+			document.querySelector('[data-render=stands]').innerHTML = ''
         }
     }
 
+    // Import action
 	document.querySelector('[data-trigger=import]').onclick = e => {
 		let data = [
 			{ name: 'Android', variations: [{ width: 320, height: 360 }, { width: 360, height: 360 }] },
 			{ name: 'Banners', variations: [{ width: 540, height: 720 }, { width: 240, height: 480 }, { width: 600, height: 200 }, { width: 400, height: 400 }] }
 		]
-		parent.postMessage({ pluginMessage: { type: 'request-import', data: data } }, '*')
+		parent.postMessage({ pluginMessage: { type: 'request-import', data: JSON.stringify(data) } }, '*')
     }
 
+	// Export action
 	document.querySelector('[data-trigger=export]').onclick = e => {
 		parent.postMessage({ pluginMessage: { type: 'request-export' } }, '*')
+	}
+
+	// Dump action
+	document.querySelector('[data-trigger=dump]').onclick = e => {
+		parent.postMessage({ pluginMessage: { type: 'request-dump' } }, '*')
 	}
 
     // Delegated UI events for trigger stand and variation

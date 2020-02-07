@@ -1,10 +1,6 @@
 const X_SPACING = 100
 
-let DB = [
-    { name: 'Android', variations: [{ width: 320, height: 360 }, { width: 360, height: 360 }] },
-    { name: 'Banners', variations: [{ width: 540, height: 720 }, { width: 240, height: 480 }, { width: 600, height: 200 }, { width: 400, height: 400 }] }
-]
-
+// core functions
 function createStand(node, id) {
     let stand = getSavedStand(id)
     let offset = 0
@@ -21,22 +17,42 @@ function createVariation(node, width, height, offset) {
     clone.y = node.y
 }
 
+function dumpBoutique() {
+    figma.root.setPluginData('boutique', '')
+}
+
+function saveBoutique(boutique) {
+    figma.root.setPluginData('boutique', boutique)
+}
+
 function getSavedBoutique() {
-    return DB
+    let boutique = figma.root.getPluginData('boutique')
+    return (boutique === '') ? [] : JSON.parse(boutique);
 }
 
 function getSavedStand(standId) {
-    return DB[standId]
+    let boutique = getSavedBoutique()
+    return boutique[standId]
 }
 
 function getSavedVariation(standId, variationId) {
-    return getSavedStand(standId).variations[variationId]
+    let stand = getSavedStand(standId)
+    return stand.variations[variationId]
 }
+
+function renderFromSavedState() {
+    var boutique = getSavedBoutique()
+    if (boutique.length === 0) {
+        figma.ui.postMessage({ type: 'empty' })
+    } else {
+        figma.ui.postMessage({ type: 'render', boutique: boutique })
+    }
+}
+
 
 // Get saved config and render UI
 figma.showUI(__html__, {width: 320, height: 480})
-var boutique = getSavedBoutique()
-figma.ui.postMessage({ type: 'render', boutique: boutique })
+renderFromSavedState()
 
 
 // Listen for actions in the UI
@@ -58,12 +74,18 @@ figma.ui.onmessage = msg => {
     }
 
     if (msg.type === 'request-import') {
-        console.log('code.js import')
+        let boutique = msg.data
+        saveBoutique(boutique)
+        renderFromSavedState()
     }
-
 
     if (msg.type === 'request-export') {
         console.log('code.js export')
+    }
+
+    if (msg.type === 'request-dump') {
+        saveBoutique('')
+        renderFromSavedState()
     }
 
     // figma.closePlugin();
