@@ -96,7 +96,6 @@ figma.ui.onmessage = msg => {
 
     if (msg.type === 'remove-variation') {
         removeVariation(msg.standId, msg.variationId)
-        renderFromSavedState()
     }
 
     if (msg.type === 'edit-variation') {
