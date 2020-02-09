@@ -194,7 +194,7 @@ html, body{ min-height: 100%; height: 100%; }
             </div>
             <div class="disclosure__content">
                 <button class="type--pos-medium-normal variation-item stand-run" data-trigger="run-stand" data-stand="${standId}">Run all variations</button>
-                <ul class="variations">
+                <ul data-node="variations" class="variations">
                  ${variations}
                 </ul>
             </div>
@@ -273,7 +273,7 @@ html, body{ min-height: 100%; height: 100%; }
 		parent.postMessage({ pluginMessage: { type: 'request-dump' } }, '*')
 	}
 
-    // Delegated UI events for trigger stand and variation
+    // Delegated UI events for stands and variations
 	document.querySelector('[data-render=stands]').onclick = e => {
     	let trigger = e.target.getAttribute('data-trigger')
 		if (trigger === 'run-stand') {
@@ -285,6 +285,11 @@ html, body{ min-height: 100%; height: 100%; }
 			let standId = e.target.getAttribute('data-stand')
 			let variationId = e.target.getAttribute('data-variation')
 			parent.postMessage({ pluginMessage: { type: 'run-variation', variationId: parseInt(variationId), standId: parseInt(standId) } }, '*')
+		}
+
+		if (trigger === 'add-variation') {
+			let standId = e.target.getAttribute('data-stand')
+			parent.postMessage({ pluginMessage: { type: 'add-variation', standId: parseInt(standId) } }, '*')
 		}
 
 		if (trigger === 'remove-variation') {
