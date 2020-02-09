@@ -74,14 +74,12 @@ html, body{ min-height: 100%; height: 100%; }
                 .variation-item * { pointer-events: none; }
                 .variation-item:last-child { border-bottom: none; }
                 .variation-preview-wrapper { width: 24px; height: 24px; flex-shrink: 0; flex-grow: 0; display: flex; align-items: center; justify-content: center; margin-right: 8px; }
-            .variation-preview { border: solid 1px rgba(0, 0, 0, 0.1); background: rgba(0, 0, 0, 0.05); display: block }
+                    .variation-preview { border: solid 1px rgba(0, 0, 0, 0.1); background: rgba(0, 0, 0, 0.05); display: block }
                 .variation-resolution { font-style: normal; flex-grow: 1;}
-                    .variation-resolution input {
-                        width: 50px;
-                        display: inline;
-                        pointer-events: auto;
-                    }
                 .variation-item .action { pointer-events: auto; flex-shrink: 0; flex-grow: 0; margin-left: 8px; }
+            .variation-item.edit { position: absolute; left: 0; top: 0; bottom: 0; right: 0; width: auto; background-color: #fff; border: none; }
+                .variation-item.edit input { width: 50px; display: inline-block; pointer-events: auto; }
+
 
 </style>
 
@@ -90,34 +88,6 @@ html, body{ min-height: 100%; height: 100%; }
     <button data-trigger="export" class="icon icon--align-top icon--button action export">Export</button>
     <button data-trigger="dump" class="icon icon--trash icon--button action dump">Remove all</button>
     <ul data-render="stands" class="disclosure stands"></ul>
-        <ul>
-            <li class="disclosure__item stand-item disclosure--expanded">
-                <div class="disclosure__label disclosure--section">Banners</div>
-                <div class="disclosure__content">
-                    <button class="type--pos-small-normal variation-item stand-run" data-trigger="run-stand" data-stand="1">Run all variations</button>
-                    <ul class="variations">
-                        <li class="variation-item edit" data-trigger="run-variation" data-stand="1" data-variation="0">
-                            <span class="variation-preview-wrapper"><i class="variation-preview" style="width:75.00000000000001%; height:100%;"></i></span>
-                            <div class="type type--pos-medium-normal variation-resolution">
-                                <input type="input" class="input" placeholder="540">
-                                <span class="ml-8 mr-8">x</span>
-                                <input type="input" class="input" placeholder="720">
-                            </div>
-                            <button data-trigger="remove-variation" data-stand="1" data-variation="0" class="icon icon--trash icon--button action variation-remove">Remove</button>
-                            <button data-trigger="edit-variation" data-stand="1" data-variation="0" class="icon icon--resolve icon--button action variation-remove">Edit</button>
-                        </li>
-                        <li class="variation-item" data-trigger="run-variation" data-stand="1" data-variation="0">
-                            <span class="variation-preview-wrapper"><i class="variation-preview" style="width:75.00000000000001%; height:100%;"></i></span>
-                            <div class="type type--pos-medium-normal variation-resolution">
-                                540 x 720
-                            </div>
-                            <button data-trigger="edit-variation" data-stand="1" data-variation="0" class="icon icon--adjust icon--button action variation-remove">Edit</button>
-                            <!--button data-trigger="remove-variation" data-stand="1" data-variation="0" class="icon icon--trash icon--button action variation-remove">Remove</button-->
-                        </li>
-                    </ul>
-                </div>
-            </li>
-        </ul>
 </section>
 
 <section data-node="import-form" class="view form boutique-import hidden">
@@ -164,16 +134,27 @@ html, body{ min-height: 100%; height: 100%; }
 		return {width, height}
     }
 
+
     function variationTemplate(standId, variationId, variation) {
 
         let {width, height} = getVariationRatio(variation.width, variation.height)
 
     	return `
-        <li class="variation-item" data-trigger="run-variation" data-stand="${standId}" data-variation="${variationId}" data-node="variation">
+        <li class="variation-item" data-node="variation" data-trigger="run-variation" data-stand="${standId}" data-variation="${variationId}">
             <span class="variation-preview-wrapper"><i class="variation-preview" style="width:${width}%; height:${height}%;"></i></span>
             <em class='type type--pos-medium-normal variation-resolution'>${variation.width} x ${variation.height}</em>
             <button data-trigger="edit-variation" data-stand="${standId}" data-variation="${variationId}" class="icon icon--adjust icon--button action variation-remove">Edit</button>
-            <button data-trigger="remove-variation" data-stand="${standId}" data-variation="${variationId}" class="icon icon--trash icon--button action variation-remove">Remove</button>
+
+            <div data-node="variation-edit" class="variation-item edit">
+                <span class="variation-preview-wrapper"><i class="variation-preview" style="width:${width}%; height:${height}%;"></i></span>
+                <div class="type type--pos-medium-normal variation-resolution">
+                    <input type="input" class="input" value="${variation.width}">
+                    <span class="ml-8 mr-8">x</span>
+                    <input type="input" class="input" value="${variation.height}">
+                </div>
+                <button data-trigger="remove-variation" data-stand="${standId}" data-variation="${variationId}" class="icon icon--trash icon--button action variation-remove">Remove</button>
+                <button data-trigger="save-variation" data-stand="${standId}" data-variation="${variationId}" class="icon icon--resolve icon--button action variation-remove">Done</button>
+            </div>
         </li>
     	`
     }
