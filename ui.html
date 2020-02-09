@@ -145,12 +145,12 @@ html, body{ min-height: 100%; height: 100%; }
             <em class='type type--pos-medium-normal variation-resolution'>${variation.width} x ${variation.height}</em>
             <button data-trigger="edit-variation" data-stand="${standId}" data-variation="${variationId}" class="icon icon--adjust icon--button action variation-remove">Edit</button>
 
-            <div data-node="variation-edit" class="variation-item edit">
+            <div data-node="variation-edit" class="variation-item edit hidden">
                 <span class="variation-preview-wrapper"><i class="variation-preview" style="width:${width}%; height:${height}%;"></i></span>
                 <div class="type type--pos-medium-normal variation-resolution">
-                    <input type="input" class="input" value="${variation.width}">
+                    <input data-read="variation-width" type="number" class="input" value="${variation.width}">
                     <span class="ml-8 mr-8">x</span>
-                    <input type="input" class="input" value="${variation.height}">
+                    <input data-read="variation-height" type="number" class="input" value="${variation.height}">
                 </div>
                 <button data-trigger="remove-variation" data-stand="${standId}" data-variation="${variationId}" class="icon icon--trash icon--button action variation-remove">Remove</button>
                 <button data-trigger="save-variation" data-stand="${standId}" data-variation="${variationId}" class="icon icon--resolve icon--button action variation-remove">Done</button>
@@ -201,6 +201,12 @@ html, body{ min-height: 100%; height: 100%; }
         if (msg.type === 'empty') {
             console.log('No boutique data stored, show an empty state')
 			document.querySelector('[data-render=stands]').innerHTML = ''
+        }
+
+        if (msg.type === 'edited-variation') {
+        	let variation = msg.variation
+            let variationNode = getVariationNode(variation.standId, variation.variationId)
+            variationNode.outerHTML = variationTemplate(variation.standId, variation.variationId, variation)
         }
     }
 
@@ -253,12 +259,22 @@ html, body{ min-height: 100%; height: 100%; }
 		if (trigger === 'edit-variation') {
 			let standId = e.target.getAttribute('data-stand')
 			let variationId = e.target.getAttribute('data-variation')
-            // Show edit UI to obtain new width, height then send edit-variation message on confirm
-            let width = 100
-			let height = 100
-			parent.postMessage({ pluginMessage: { type: 'edit-variation', variationId: parseInt(variationId), standId: parseInt(standId), width: width, height: height } }, '*')
+            e.target.parentElement.querySelector('[data-node=variation-edit]').classList.remove('hidden')
 		}
 
+		if (trigger === 'save-variation') {
+			// Prevent duplicated clicks
+			let standId = e.target.getAttribute('data-stand')
+			let variationId = e.target.getAttribute('data-variation')
+			let width = e.target.parentElement.querySelector('[data-read=variation-width]').value
+			let height = e.target.parentElement.querySelector('[data-read=variation-height]').value
+
+            if (width !== '' && height !== '') {
+            	parent.postMessage({ pluginMessage: { type: 'edit-variation', standId: parseInt(standId), variationId: parseInt(variationId), width: parseInt(width), height: parseInt(height) } }, '*')
+			} else {
+				e.target.parentElement.classList.add('hidden')
+            }
+        }
 
     }
 </script>
