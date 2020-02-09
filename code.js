@@ -49,8 +49,10 @@ function getSavedVariation(standId, variationId) {
 
 function removeVariation(standId, variationId) {
     let boutique = getSavedBoutique()
-    boutique[standId].variations.splice(variationId, 1)
+    let stand =  boutique[standId]
+    stand.variations.splice(variationId, 1)
     saveBoutique(JSON.stringify(boutique))
+    return {standId, stand }
 }
 
 function renderFromSavedState() {
@@ -103,7 +105,8 @@ figma.ui.onmessage = msg => {
     }
 
     if (msg.type === 'remove-variation') {
-        removeVariation(msg.standId, msg.variationId)
+        let {standId, stand} = removeVariation(msg.standId, msg.variationId)
+        figma.ui.postMessage({ type: 'removed-variation', standId, stand })
     }
 
     if (msg.type === 'edit-variation') {
