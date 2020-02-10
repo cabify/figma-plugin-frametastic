@@ -168,16 +168,16 @@ html, body{ min-height: 100%; height: 100%; }
             <em class='type type--pos-medium-normal variation-resolution'>${variation.width} x ${variation.height}</em>
             <button data-trigger="edit-variation" data-stand="${standId}" data-variation="${variationId}" class="icon icon--adjust icon--button action variation-remove">Edit</button>
 
-            <div data-node="variation-edit" class="variation-item edit hidden">
+            <form data-trigger="submit-variation" data-node="variation-edit" data-stand="${standId}" data-variation="${variationId}"  class="variation-item edit hidden">
                 <span class="variation-preview-wrapper"><i class="variation-preview" style="width:${width}%; height:${height}%;"></i></span>
                 <div class="type type--pos-medium-normal variation-resolution">
-                    <input data-read="variation-width" type="number" class="input" placeholder="Width" value="${variation.width}">
+                    <input data-read="variation-width" required min="1" type="number" class="input" placeholder="Width" value="${variation.width}">
                     <span class="ml-8 mr-8">x</span>
-                    <input data-read="variation-height" type="number" class="input" placeholder="Height" value="${variation.height}">
+                    <input data-read="variation-height" required min="1" type="number" class="input" placeholder="Height" value="${variation.height}">
                 </div>
-                <button data-trigger="remove-variation" data-stand="${standId}" data-variation="${variationId}" class="icon icon--trash icon--button action variation-remove">Remove</button>
-                <button data-trigger="save-variation" data-stand="${standId}" data-variation="${variationId}" class="icon icon--resolve icon--button action variation-remove">Done</button>
-            </div>
+                <button type="button" data-trigger="remove-variation" data-stand="${standId}" data-variation="${variationId}" class="icon icon--trash icon--button action variation-remove">Remove</button>
+                <button type="submit" class="icon icon--resolve icon--button action variation-remove">Done</button>
+            </form>
         </li>
     	`
     }
@@ -270,7 +270,22 @@ html, body{ min-height: 100%; height: 100%; }
 		parent.postMessage({ pluginMessage: { type: 'request-dump' } }, '*')
 	}
 
-    // Delegated UI events for stands and variations
+	// Save action variation UI delegation
+    document.querySelector('[data-render=stands]').onsubmit = e => {
+		let standId = e.target.getAttribute('data-stand')
+		let variationId = e.target.getAttribute('data-variation')
+		let width = e.target.querySelector('[data-read=variation-width]').value
+		let height = e.target.querySelector('[data-read=variation-height]').value
+
+		if (width !== '' && height !== '') {
+			parent.postMessage({ pluginMessage: { type: 'edit-variation', standId: parseInt(standId), variationId: parseInt(variationId), width: parseInt(width), height: parseInt(height) } }, '*')
+		} else {
+			e.target.classList.add('hidden')
+		}
+        e.preventDefault()
+    }
+
+    // Other delegated UI events for stands and variations
 	document.querySelector('[data-render=stands]').onclick = e => {
     	let trigger = e.target.getAttribute('data-trigger')
 
@@ -307,20 +322,6 @@ html, body{ min-height: 100%; height: 100%; }
             e.target.parentElement.querySelector('[data-node=variation-edit]').classList.remove('hidden')
 			e.target.parentElement.querySelector('[data-node=variation-edit] [data-read=variation-width]').focus()
 		}
-
-		if (trigger === 'save-variation') {
-			// Prevent duplicated clicks
-			let standId = e.target.getAttribute('data-stand')
-			let variationId = e.target.getAttribute('data-variation')
-			let width = e.target.parentElement.querySelector('[data-read=variation-width]').value
-			let height = e.target.parentElement.querySelector('[data-read=variation-height]').value
-
-            if (width !== '' && height !== '') {
-            	parent.postMessage({ pluginMessage: { type: 'edit-variation', standId: parseInt(standId), variationId: parseInt(variationId), width: parseInt(width), height: parseInt(height) } }, '*')
-			} else {
-				e.target.parentElement.classList.add('hidden')
-            }
-        }
 
     }
 </script>
