@@ -290,7 +290,9 @@ html, body{ min-height: 100%; height: 100%; }
     	let trigger = e.target.getAttribute('data-trigger')
 
         if (trigger === 'toggle-stand') {
-        	e.target.parentElement.classList.toggle('disclosure--expanded')
+        	let wasOpen = e.target.parentElement.classList.contains('disclosure--expanded')
+        	document.querySelectorAll('[data-node=stand]').forEach(node => node.classList.remove('disclosure--expanded'))
+            if (!wasOpen) e.target.parentElement.classList.add('disclosure--expanded')
         }
 
         if (trigger === 'run-stand') {
