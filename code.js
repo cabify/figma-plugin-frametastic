@@ -42,6 +42,14 @@ function editVariation(standId, variationId, width, height) {
     return { standId: standId, variationId: variationId, width: width, height: height }
 }
 
+function addVariation(standId, width, height) {
+    let boutique = getSavedBoutique()
+    let stand = boutique[standId]
+    stand.variations.splice(0, 0, { width, height })
+    saveBoutique(JSON.stringify(boutique))
+    return { standId, stand }
+}
+
 function getSavedVariation(standId, variationId) {
     let stand = getSavedStand(standId)
     return stand.variations[variationId]
@@ -112,6 +120,11 @@ figma.ui.onmessage = msg => {
     if (msg.type === 'edit-variation') {
         let variation = editVariation(msg.standId, msg.variationId, msg.width, msg.height)
         figma.ui.postMessage({ type: 'edited-variation', variation })
+    }
+
+    if (msg.type === 'add-variation') {
+        let {standId, stand} = addVariation(msg.standId, msg.width, msg.height)
+        figma.ui.postMessage({ type: 'added-variation', standId, stand })
     }
 
     // figma.closePlugin();

@@ -206,7 +206,7 @@ html, body{ min-height: 100%; height: 100%; }
     onmessage = e => {
     	let msg = event.data.pluginMessage
 
-		// Render plugin UI
+		// Render complete stands and variations from saved state
         if (msg.type === 'render') {
         	let standsBuffer = ''
             msg.boutique.forEach((stand, standId) => {
@@ -229,13 +229,15 @@ html, body{ min-height: 100%; height: 100%; }
 			document.querySelector('[data-render=stands]').innerHTML = ''
         }
 
+        // Re-render a single variation
         if (msg.type === 'edited-variation') {
         	let variation = msg.variation
             let variationNode = getVariationNode(variation.standId, variation.variationId)
             variationNode.outerHTML = variationTemplate(variation.standId, variation.variationId, variation)
         }
 
-        if (msg.type === 'removed-variation') {
+        // Re-render a single stand
+        if (msg.type === 'removed-variation' || msg.type === 'added-variation') {
         	let standNode = getStandNode(msg.standId)
 			let variationsBuffer = ''
 			msg.stand.variations.forEach((variation, variationId) => {
@@ -277,10 +279,10 @@ html, body{ min-height: 100%; height: 100%; }
 		let width = e.target.querySelector('[data-read=variation-width]').value
 		let height = e.target.querySelector('[data-read=variation-height]').value
 
-		if (width !== '' && height !== '') {
-			parent.postMessage({ pluginMessage: { type: 'edit-variation', standId: parseInt(standId), variationId: parseInt(variationId), width: parseInt(width), height: parseInt(height) } }, '*')
+		if (variationId === 'new-variation') {
+			parent.postMessage({ pluginMessage: { type: 'add-variation', standId: parseInt(standId), width: parseInt(width), height: parseInt(height) } }, '*')
 		} else {
-			e.target.classList.add('hidden')
+			parent.postMessage({ pluginMessage: { type: 'edit-variation', standId: parseInt(standId), variationId: parseInt(variationId), width: parseInt(width), height: parseInt(height) } }, '*')
 		}
         e.preventDefault()
     }
@@ -308,13 +310,27 @@ html, body{ min-height: 100%; height: 100%; }
 
 		if (trigger === 'add-variation') {
 			let standId = e.target.getAttribute('data-stand')
-			parent.postMessage({ pluginMessage: { type: 'add-variation', standId: parseInt(standId) } }, '*')
+            let standNode = getStandNode(standId)
+
+            // Only allow 1 new-variation form
+            if (!standNode.querySelector('[data-node=variation][data-variation=new-variation]')) {
+                let variationBuffer = variationTemplate(standId, 'new-variation', { width: '', height: '' })
+                standNode.querySelector('[data-node=variations]').insertAdjacentHTML('afterbegin', variationBuffer)
+                standNode.querySelector('[data-node=variation][data-variation=new-variation] [data-node=variation-edit]').classList.remove('hidden')
+			}
+
+			standNode.querySelector('[data-node=variation][data-variation=new-variation] [data-node=variation-edit] [data-read=variation-width]').focus()
 		}
 
 		if (trigger === 'remove-variation') {
 			let standId = e.target.getAttribute('data-stand')
 			let variationId = e.target.getAttribute('data-variation')
-			parent.postMessage({ pluginMessage: { type: 'remove-variation', variationId: parseInt(variationId), standId: parseInt(standId) } }, '*')
+			if (variationId !== 'new-variation') {
+				parent.postMessage({ pluginMessage: { type: 'remove-variation', variationId: parseInt(variationId), standId: parseInt(standId) } }, '*')
+            } else {
+				let variationNode = getVariationNode(standId, 'new-variation')
+				variationNode.remove()
+            }
 		}
 
 		if (trigger === 'edit-variation') {
