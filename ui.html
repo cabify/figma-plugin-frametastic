@@ -71,6 +71,7 @@ html, body{ min-height: 100%; height: 100%; }
             .stand-header { display: flex; align-items: center; justify-content: start; height: 40px; }
             .stand-header.edit { position: absolute; left: 0; top: 0; bottom: 0; right: 0; padding: 8px; background: #ffffff; }
             .stand-header.edit .action { opacity: 1; pointer-events: auto; }
+            .stand-header.edit .input { margin-left: 8px; }
 
             .stand-header:before { top: 12px; }
                 .stand-name { font-style: normal; flex-grow: 1; pointer-events: none; }
@@ -190,7 +191,7 @@ html, body{ min-height: 100%; height: 100%; }
     	return `
          <li data-node="stand" data-stand="${standId}" class="disclosure__item ${expanded} stand-item">
             <div data-trigger="toggle-stand" class="disclosure__label disclosure--section stand-header">
-                <em class="stand-name type type--pos-medium-medium">${stand.name}</em>
+                <em data-render="stand-name" class="stand-name type type--pos-medium-medium">${stand.name}</em>
                 <button data-trigger="add-variation" data-stand="${standId}" class="icon icon--plus icon--button action variation-add">Done</button>
                 <button data-trigger="edit-stand" data-stand="${standId}" class="icon icon--adjust icon--button action stand-edit">Edit</button>
 
@@ -238,6 +239,13 @@ html, body{ min-height: 100%; height: 100%; }
 			document.querySelector('[data-render=stands]').innerHTML = ''
         }
 
+		// Re-render a just the stand name
+		if (msg.type === 'edited-stand') {
+			let standNode = getStandNode(msg.standId)
+            standNode.querySelector('[data-render=stand-name]').innerHTML = msg.stand.name
+			standNode.querySelector('[data-node=stand-edit]').classList.add('hidden')
+		}
+
         // Re-render a single variation
         if (msg.type === 'edited-variation') {
         	let variation = msg.variation
@@ -283,16 +291,33 @@ html, body{ min-height: 100%; height: 100%; }
 
 	// Save action variation UI delegation
     document.querySelector('[data-render=stands]').onsubmit = e => {
-		let standId = e.target.getAttribute('data-stand')
-		let variationId = e.target.getAttribute('data-variation')
-		let width = e.target.querySelector('[data-read=variation-width]').value
-		let height = e.target.querySelector('[data-read=variation-height]').value
+		let trigger = e.target.getAttribute('data-trigger')
 
-		if (variationId === 'new-variation') {
-			parent.postMessage({ pluginMessage: { type: 'add-variation', standId: parseInt(standId), width: parseInt(width), height: parseInt(height) } }, '*')
-		} else {
-			parent.postMessage({ pluginMessage: { type: 'edit-variation', standId: parseInt(standId), variationId: parseInt(variationId), width: parseInt(width), height: parseInt(height) } }, '*')
+        if (trigger === 'submit-variation') {
+			let standId = e.target.getAttribute('data-stand')
+			let variationId = e.target.getAttribute('data-variation')
+			let width = e.target.querySelector('[data-read=variation-width]').value
+			let height = e.target.querySelector('[data-read=variation-height]').value
+
+			if (variationId === 'new-variation') {
+				parent.postMessage({ pluginMessage: { type: 'add-variation', standId: parseInt(standId), width: parseInt(width), height: parseInt(height) } }, '*')
+			} else {
+				parent.postMessage({ pluginMessage: { type: 'edit-variation', standId: parseInt(standId), variationId: parseInt(variationId), width: parseInt(width), height: parseInt(height) } }, '*')
+			}
+        }
+
+		if (trigger === 'submit-stand') {
+			let standId = e.target.getAttribute('data-stand')
+			let name = e.target.querySelector('[data-read=stand-name]').value
+
+			if (standId === 'new-stand') {
+				parent.postMessage({ pluginMessage: { type: 'add-stand', standId: parseInt(standId), name: name } }, '*')
+			} else {
+				parent.postMessage({ pluginMessage: { type: 'edit-stand', standId: parseInt(standId), name: name } }, '*')
+			}
 		}
+
+
         e.preventDefault()
     }
 
@@ -340,6 +365,13 @@ html, body{ min-height: 100%; height: 100%; }
 				let variationNode = getVariationNode(standId, 'new-variation')
 				variationNode.remove()
             }
+		}
+
+		if (trigger === 'edit-stand') {
+			let standId = e.target.getAttribute('data-stand')
+			document.querySelectorAll('[data-node=stand-edit]').forEach(node => node.classList.add('hidden'))
+			e.target.parentElement.querySelector('[data-node=stand-edit]').classList.remove('hidden')
+			e.target.parentElement.querySelector('[data-node=stand-edit] [data-read=stand-name]').focus()
 		}
 
 		if (trigger === 'edit-variation') {

@@ -35,6 +35,14 @@ function getSavedStand(standId) {
     return boutique[standId]
 }
 
+function editStand(standId, name) {
+    let boutique = getSavedBoutique()
+    let stand = boutique[standId]
+    stand.name = name
+    saveBoutique(JSON.stringify(boutique))
+    return { standId, stand }
+}
+
 function editVariation(standId, variationId, width, height) {
     let boutique = getSavedBoutique()
     boutique[standId].variations[variationId] = { width: width, height: height }
@@ -115,6 +123,11 @@ figma.ui.onmessage = msg => {
     if (msg.type === 'remove-variation') {
         let {standId, stand} = removeVariation(msg.standId, msg.variationId)
         figma.ui.postMessage({ type: 'removed-variation', standId, stand })
+    }
+
+    if (msg.type === 'edit-stand') {
+        let { standId, stand } = editStand(msg.standId,msg.name)
+        figma.ui.postMessage({ type: 'edited-stand', standId, stand })
     }
 
     if (msg.type === 'edit-variation') {
