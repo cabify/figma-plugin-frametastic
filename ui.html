@@ -67,8 +67,11 @@ html, body{ min-height: 100%; height: 100%; }
         .actions .action-labeled { flex-grow: 1; }
 
     .stands {}
-        .stand-item { }
+        .stand-item { position: relative; }
             .stand-header { display: flex; align-items: center; justify-content: start; height: 40px; }
+            .stand-header.edit { position: absolute; left: 0; top: 0; bottom: 0; right: 0; padding: 8px; background: #ffffff; }
+            .stand-header.edit .action { opacity: 1; pointer-events: auto; }
+
             .stand-header:before { top: 12px; }
                 .stand-name { font-style: normal; flex-grow: 1; pointer-events: none; }
                 .stand-header .action { flex-shrink: 0; flex-grow: 0; margin-left: 8px; }
@@ -166,7 +169,7 @@ html, body{ min-height: 100%; height: 100%; }
         <li class="variation-item" data-node="variation" data-trigger="run-variation" data-stand="${standId}" data-variation="${variationId}">
             <span class="variation-preview-wrapper"><i class="variation-preview" style="width:${width}%; height:${height}%;"></i></span>
             <em class='type type--pos-medium-normal variation-resolution'>${variation.width} x ${variation.height}</em>
-            <button data-trigger="edit-variation" data-stand="${standId}" data-variation="${variationId}" class="icon icon--adjust icon--button action variation-remove">Edit</button>
+            <button data-trigger="edit-variation" data-stand="${standId}" data-variation="${variationId}" class="icon icon--adjust icon--button action">Edit</button>
 
             <form data-trigger="submit-variation" data-node="variation-edit" data-stand="${standId}" data-variation="${variationId}"  class="variation-item edit hidden">
                 <span class="variation-preview-wrapper"><i class="variation-preview" style="width:${width}%; height:${height}%;"></i></span>
@@ -175,8 +178,8 @@ html, body{ min-height: 100%; height: 100%; }
                     <span class="ml-8 mr-8">x</span>
                     <input data-read="variation-height" required min="1" type="number" class="input" placeholder="Height" value="${variation.height}">
                 </div>
-                <button type="button" data-trigger="remove-variation" data-stand="${standId}" data-variation="${variationId}" class="icon icon--trash icon--button action variation-remove">Remove</button>
-                <button type="submit" class="icon icon--resolve icon--button action variation-remove">Done</button>
+                <button type="button" data-trigger="remove-variation" data-stand="${standId}" data-variation="${variationId}" class="icon icon--trash icon--button action">Remove</button>
+                <button type="submit" class="icon icon--resolve icon--button action">Done</button>
             </form>
         </li>
     	`
@@ -190,6 +193,12 @@ html, body{ min-height: 100%; height: 100%; }
                 <em class="stand-name type type--pos-medium-medium">${stand.name}</em>
                 <button data-trigger="add-variation" data-stand="${standId}" class="icon icon--plus icon--button action variation-add">Done</button>
                 <button data-trigger="edit-stand" data-stand="${standId}" class="icon icon--adjust icon--button action stand-edit">Edit</button>
+
+                 <form data-trigger="submit-stand" data-node="stand-edit" data-stand="${standId}" class="stand-header edit hidden">
+                    <input data-read="stand-name" required type="text" class="input" placeholder="Write a name" value="${stand.name}">
+                    <button type="button" data-trigger="remove-stand" data-stand="${standId}" class="icon icon--trash icon--button action">Remove</button>
+                    <button type="submit" class="icon icon--resolve icon--button action">Done</button>
+                </form>
             </div>
             <div class="disclosure__content">
                 <button class="type--pos-medium-normal variation-item stand-run" data-trigger="run-stand" data-stand="${standId}">Run all variations</button>
