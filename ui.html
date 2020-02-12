@@ -75,11 +75,11 @@ html, body{ min-height: 100%; height: 100%; }
 
             .stand-header:before { top: 12px; }
                 .stand-name { font-style: normal; flex-grow: 1; pointer-events: none; }
+                .stand-empty { font-style: normal; text-align: left; color: #9A9A9A;}
                 .stand-header .action { flex-shrink: 0; flex-grow: 0; margin-left: 8px; }
             .stand-item .disclosure__content { padding: 0; }
             .stand-header .action { opacity: 0; pointer-events: none; }
             .stand-item.disclosure--expanded .stand-header .action { opacity: 1; pointer-events: auto; }
-
 
         .variations { list-style: none; }
             .variation-item.stand-run { padding: 12px 8px 12px 24px; color: #18a0fb; }
@@ -188,10 +188,16 @@ html, body{ min-height: 100%; height: 100%; }
 
     function standTemplate(standId, stand, variations, isExpanded) {
     	let expanded = (isExpanded) ? 'disclosure--expanded' : '';
+    	let hiddenRunAll = (stand.variations.length > 1) ? '' : 'hidden';
+    	let showEmptyState = (stand.variations.length == 0) ? '' : 'hidden';
+
     	return `
          <li data-node="stand" data-stand="${standId}" class="disclosure__item ${expanded} stand-item">
             <div data-trigger="toggle-stand" class="disclosure__label disclosure--section stand-header">
-                <em data-render="stand-name" class="stand-name type type--pos-medium-medium">${stand.name}</em>
+                <em data-render="stand-name" class="stand-name type type--pos-medium-medium">
+                    ${stand.name}
+                    <span class="stand-empty ${showEmptyState}"> · Empty stand</span>
+                </em>
                 <button data-trigger="add-variation" data-stand="${standId}" class="icon icon--plus icon--button action variation-add">Done</button>
                 <button data-trigger="edit-stand" data-stand="${standId}" class="icon icon--adjust icon--button action stand-edit">Edit</button>
 
@@ -202,9 +208,9 @@ html, body{ min-height: 100%; height: 100%; }
                 </form>
             </div>
             <div class="disclosure__content">
-                <button class="type--pos-medium-normal variation-item stand-run" data-trigger="run-stand" data-stand="${standId}">Run all variations</button>
+                <button class="type--pos-medium-normal variation-item stand-run ${hiddenRunAll}" data-trigger="run-stand" data-stand="${standId}">Run all variations</button>
                 <ul data-node="variations" class="variations">
-                 ${variations}
+                    ${variations}
                 </ul>
             </div>
         </li>
@@ -291,7 +297,7 @@ html, body{ min-height: 100%; height: 100%; }
 
 		// Only allow 1 new-stand form
 		if (!mainNode.querySelector('[data-node=stand][data-stand=new-stand]')) {
-			let standBuffer = standTemplate('new-stand', { name: '' }, '', true)
+			let standBuffer = standTemplate('new-stand', { name: '', variations: [] }, '', true)
 			mainNode.insertAdjacentHTML('afterbegin', standBuffer)
 			mainNode.querySelector('[data-node=stand][data-stand=new-stand] [data-node=stand-edit]').classList.remove('hidden')
 		}
