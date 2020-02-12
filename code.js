@@ -63,6 +63,13 @@ function getSavedVariation(standId, variationId) {
     return stand.variations[variationId]
 }
 
+function removeStand(standId) {
+    let boutique = getSavedBoutique()
+    let stand =  boutique.splice(standId, 1)
+    saveBoutique(JSON.stringify(boutique))
+    return boutique
+}
+
 function removeVariation(standId, variationId) {
     let boutique = getSavedBoutique()
     let stand =  boutique[standId]
@@ -117,6 +124,11 @@ figma.ui.onmessage = msg => {
 
     if (msg.type === 'request-dump') {
         saveBoutique('')
+        renderFromSavedState()
+    }
+
+    if (msg.type === 'remove-stand') {
+        let standId = removeStand(msg.standId)
         renderFromSavedState()
     }
 

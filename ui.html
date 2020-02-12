@@ -356,6 +356,16 @@ html, body{ min-height: 100%; height: 100%; }
 			standNode.querySelector('[data-node=variation][data-variation=new-variation] [data-node=variation-edit] [data-read=variation-width]').focus()
 		}
 
+		if (trigger === 'remove-stand') {
+			let standId = e.target.getAttribute('data-stand')
+			if (standId !== 'new-stand') {
+				parent.postMessage({ pluginMessage: { type: 'remove-stand', standId: parseInt(standId) } }, '*')
+			} else {
+				let standNode = getStandNode(standId)
+				standNode.remove()
+			}
+		}
+
 		if (trigger === 'remove-variation') {
 			let standId = e.target.getAttribute('data-stand')
 			let variationId = e.target.getAttribute('data-variation')
