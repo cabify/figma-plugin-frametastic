@@ -284,6 +284,22 @@ html, body{ min-height: 100%; height: 100%; }
 		document.querySelector('[data-node=export-form]').classList.add('hidden')
 	}
 
+	// Add stand action
+	document.querySelector('[data-trigger=add-stand]').onclick = e => {
+		let standId = e.target.getAttribute('data-stand')
+		let mainNode = document.querySelector('[data-render=stands]')
+
+		// Only allow 1 new-stand form
+		if (!mainNode.querySelector('[data-node=stand][data-stand=new-stand]')) {
+			let standBuffer = standTemplate('new-stand', { name: '' }, '', true)
+			mainNode.insertAdjacentHTML('afterbegin', standBuffer)
+			mainNode.querySelector('[data-node=stand][data-stand=new-stand] [data-node=stand-edit]').classList.remove('hidden')
+		}
+
+		mainNode.querySelector('[data-node=stand][data-stand=new-stand] [data-node=stand-edit] [data-read=stand-name]').focus()
+	}
+
+
 	// Dump action
 	document.querySelector('[data-trigger=dump]').onclick = e => {
 		parent.postMessage({ pluginMessage: { type: 'request-dump' } }, '*')
@@ -311,7 +327,7 @@ html, body{ min-height: 100%; height: 100%; }
 			let name = e.target.querySelector('[data-read=stand-name]').value
 
 			if (standId === 'new-stand') {
-				parent.postMessage({ pluginMessage: { type: 'add-stand', standId: parseInt(standId), name: name } }, '*')
+				parent.postMessage({ pluginMessage: { type: 'add-stand', name: name } }, '*')
 			} else {
 				parent.postMessage({ pluginMessage: { type: 'edit-stand', standId: parseInt(standId), name: name } }, '*')
 			}
