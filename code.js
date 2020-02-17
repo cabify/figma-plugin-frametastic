@@ -26,7 +26,7 @@ function saveBoutique(boutique) {
 }
 
 function getSavedBoutique() {
-    let boutique = figma.root.getPluginData('boutique')
+    let boutique = figma.root.getPluginData('boutique');
     return (boutique === '') ? [] : JSON.parse(boutique);
 }
 
