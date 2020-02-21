@@ -109,7 +109,7 @@ figma.ui.onmessage = msg => {
         source.forEach(node => {
             createStand(node, msg.standId)
         })
-        figma.notify('Frametastic!')
+        figma.notify('🕺 Frametastic!')
     }
 
     if (msg.type === 'run-variation') {
@@ -118,7 +118,7 @@ figma.ui.onmessage = msg => {
         source.forEach(node => {
             createVariation(node, variation.width, variation.height)
         })
-        figma.notify('Frametastic!')
+        figma.notify('🕺 Frametastic!')
     }
 
     if (msg.type === 'request-import') {
