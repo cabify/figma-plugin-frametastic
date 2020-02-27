@@ -97,7 +97,7 @@ html, body{ min-height: 100%; height: 100%; }
 
 </style>
 
-<section class="view boutique">
+<section data-node="boutique" class="view boutique">
     <section class="actions">
         <button data-trigger="import" class="icon icon--align-bottom icon--button action-labeled import">Import</button>
         <button data-trigger="export" class="icon icon--align-top icon--button action-labeled export">Export</button>
@@ -315,21 +315,6 @@ html, body{ min-height: 100%; height: 100%; }
         document.querySelector('[data-node=export-form]').classList.add('hidden')
     }
 
-    // Add stand action
-    document.querySelector('[data-trigger=add-stand]').onclick = e => {
-        let standId = e.target.getAttribute('data-stand')
-        let mainNode = document.querySelector('[data-render=stands]')
-
-        // Only allow 1 new-stand form
-        if (!mainNode.querySelector('[data-node=stand][data-stand=new-stand]')) {
-            let standBuffer = standTemplate('new-stand', { name: '', variations: [] }, '', true)
-            mainNode.insertAdjacentHTML('afterbegin', standBuffer)
-            mainNode.querySelector('[data-node=stand][data-stand=new-stand] [data-node=stand-edit]').classList.remove('hidden')
-        }
-
-        mainNode.querySelector('[data-node=stand][data-stand=new-stand] [data-node=stand-edit] [data-read=stand-name]').focus()
-    }
-
     // Dump action
     document.querySelector('[data-trigger=dump]').onclick = e => {
         parent.postMessage({ pluginMessage: { type: 'request-dump' } }, '*')
@@ -368,8 +353,23 @@ html, body{ min-height: 100%; height: 100%; }
     }
 
     // Other delegated UI events for stands and variations
-    document.querySelector('[data-render=stands]').onclick = e => {
+    document.querySelector('[data-node=boutique]').onclick = e => {
         let trigger = e.target.getAttribute('data-trigger')
+
+		// Add stand action
+        if (trigger === 'add-stand') {
+			let standId = e.target.getAttribute('data-stand')
+			let mainNode = document.querySelector('[data-render=stands]')
+
+			// Only allow 1 new-stand form
+			if (!mainNode.querySelector('[data-node=stand][data-stand=new-stand]')) {
+				let standBuffer = standTemplate('new-stand', { name: '', variations: [] }, '', true)
+				mainNode.insertAdjacentHTML('afterbegin', standBuffer)
+				mainNode.querySelector('[data-node=stand][data-stand=new-stand] [data-node=stand-edit]').classList.remove('hidden')
+			}
+
+			mainNode.querySelector('[data-node=stand][data-stand=new-stand] [data-node=stand-edit] [data-read=stand-name]').focus()
+		}
 
         if (trigger === 'toggle-stand') {
             let wasOpen = e.target.parentElement.classList.contains('disclosure--expanded')
