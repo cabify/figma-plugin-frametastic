@@ -5,10 +5,15 @@
 .hidden { display: none!important; }
 html, body{ min-height: 100%; height: 100%; }
 
-.view { position: absolute; left: 0; right: 0; top: 0; bottom: 0; overflow-y: auto; }
+.view { position: absolute; left: 0; right: 0; top: 0; bottom: 0; overflow-y: auto; background: #ffffff; }
 .form { background: #ffffff; padding: 8px; }
+    .empty-state { text-align: center; display: flex; justify-content: center; align-items: center; flex-direction: column; }
+    .empty-state h1 { margin-bottom: 4px; }
+    .empty-state p { padding: 0 32px; margin-bottom: 16px; }
 
-    /* Vars */
+
+
+/* Vars */
     :root {
         --m-4: 4px;
         --m-8: 8px;
@@ -57,7 +62,6 @@ html, body{ min-height: 100%; height: 100%; }
         .actions .action-labeled { flex-grow: 1; }
 
     .stands {}
-        .stand-empty-state { text-align: center; display: flex; justify-content:center; align-items:center;}
         .stand-item { position: relative; }
             .stand-header { display: flex; align-items: center; justify-content: start; height: 40px; }
             .stand-header.edit { position: absolute; left: 0; top: 0; bottom: 0; right: 0; padding: 8px; background: #ffffff; }
@@ -91,10 +95,6 @@ html, body{ min-height: 100%; height: 100%; }
                 .variation-item.edit input { width: 64px; display: inline-block; pointer-events: auto; }
             .variation-item.edit .action { opacity: 1; pointer-events: auto; }
 
-.adjust-vertical {
-    transform: translate(0px, -25%);
-}
-
 </style>
 
 <section class="view boutique">
@@ -106,6 +106,19 @@ html, body{ min-height: 100%; height: 100%; }
 
     <button data-trigger="dump" class="icon icon--trash icon--button action dump hidden">Remove all</button>
     <ul data-render="stands" class="disclosure stands"></ul>
+
+    <section data-node="empty-state" class="view empty-state hidden">
+        <h1 class="type type--pos-large-bold">
+            Welcome to <strong>Frametastic</strong>
+        </h1>
+        <p class="type type--pos-small-normal">
+            Create your favorite frame sizes combinations to easily test your desgins in different viewports.
+        </p>
+        <section>
+            <button data-trigger="add-stand" class="button button--primary">Create combination</button>
+            <button data-trigger="import" class="button button--secondary">Import config</button>
+        </section>
+    </section>
 </section>
 
 <section data-node="import-form-no-cancel" class="view form boutique-import hidden">
@@ -115,21 +128,6 @@ html, body{ min-height: 100%; height: 100%; }
     </div>
     <div class="boutique-import float-right m-8">
         <button data-trigger="import-save" class='button button--primary ml-8'>Import</button>
-    </div>
-</section>
-
-<section data-node="export-form" class="view form stand-empty-state hidden">
-    <div class="adjust-vertical">
-        <div class="type type--pos-large-bold mb-4">
-            Empty stands <strong>:_(</strong>
-        </div>
-        <div class="type type--pos-small-normal mb-8">
-            Create a new stand or import your JSON.
-        </div>
-        <div class="boutique-export m-8" style="margin: 0 auto;">
-            <button data-trigger="add-stand" class="button button--primary">Create stand</button>
-            <button data-trigger="import" class="button button--secondary ml-8">Import JSON</button>
-        </div>
     </div>
 </section>
 
@@ -261,6 +259,7 @@ html, body{ min-height: 100%; height: 100%; }
 
         if (msg.type === 'empty') {
             console.log('No boutique data stored, show an empty state')
+            document.querySelector('[data-node="empty-state"]').classList.remove('hidden')
             document.querySelector('[data-render=stands]').innerHTML = ''
         }
 
