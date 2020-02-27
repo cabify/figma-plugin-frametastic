@@ -138,9 +138,7 @@ html, body{ min-height: 100%; height: 100%; }
 
 <form data-node="export-form" class="view form boutique-export hidden">
     <textarea readonly data-render="export-data" rows="12" class="boutique-export textarea"></textarea>
-    <div class="boutique-export float-right m-8">
-        <button data-trigger="export-done" class='button button--primary'>Done</button>
-    </div>
+    <button type="button" data-trigger="export-done" class='button button--primary'>Done</button>
 </form>
 
 <script>
@@ -210,7 +208,7 @@ html, body{ min-height: 100%; height: 100%; }
             <div data-trigger="toggle-stand" class="disclosure__label disclosure--section stand-header">
                 <em data-render="stand-name" class="stand-name type type--pos-medium-medium">
                     ${stand.name}
-                    <span class="stand-empty ${showEmptyState}"> · Empty stand</span>
+                    <span class="stand-empty ${showEmptyState}"> · Empty combination</span>
                 </em>
                 <button data-trigger="add-variation" data-stand="${standId}" class="icon icon--plus icon--button action variation-add">Done</button>
                 <button data-trigger="edit-stand" data-stand="${standId}" class="icon icon--adjust icon--button action stand-edit">Edit</button>
@@ -319,6 +317,7 @@ html, body{ min-height: 100%; height: 100%; }
         		let parsed = JSON.parse(config)
 				parent.postMessage({ pluginMessage: { type: 'request-import', data: parsed } }, '*')
 				document.querySelector('[data-node=import-form]').classList.add('hidden')
+				document.querySelector('[data-render=import-data]').value = ''
             } catch (e) {
 				document.querySelector('[data-node=import-error]').classList.remove('hidden')
             }
