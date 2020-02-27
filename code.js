@@ -13,7 +13,7 @@ function createStand(node, id) {
 function createVariation(node, width, height, offset) {
     let clone = (node.type === 'COMPONENT') ? node.createInstance() : node.clone();
     clone.resize(width, height)
-    clone.name = `${clone.name}_${width}x${height}`;
+    clone.name = `${clone.name}-${width}x${height}`;
     clone.x = node.x + node.width + X_SPACING + (offset || 0)
     clone.y = node.y
 }
