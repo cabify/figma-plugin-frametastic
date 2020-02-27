@@ -11,27 +11,6 @@ html, body{ min-height: 100%; height: 100%; }
 .form { padding: 16px; }
     .form .button { float: right; margin: 16px 0 16px 8px; }
 
-/* Vars */
-    :root {
-        --m-4: 4px;
-        --m-8: 8px;
-    }
-
-    /* Helpers */
-    .float-right {
-        float:right;
-    }
-
-    .m-8 {
-        margin: var(--m-8);
-    }
-        .mr-8 {
-            margin-right: var(--m-8);
-        }
-        .ml-8 {
-            margin-left: var(--m-8);
-        }
-
     /* Figma UI overrides */
     .textarea { margin: 0; width: 100%; }
     .disclosure__content { padding-top: 0; padding-bottom: 0; }
@@ -92,7 +71,7 @@ html, body{ min-height: 100%; height: 100%; }
                 .variation-resolution { font-style: normal; flex-grow: 1; }
                 .variation-item .action { opacity: 0;  flex-shrink: 0; flex-grow: 0; margin-left: 8px; }
             .variation-item.edit { position: absolute; left: 0; top: 0; bottom: 0; right: 0; width: auto; background-color: #fff; border: none; }
-                .variation-item.edit input { width: 64px; display: inline-block; pointer-events: auto; }
+                .variation-item.edit input { width: 64px; display: inline-block; pointer-events: auto; margin: 0 8px; }
             .variation-item.edit .action { opacity: 1; pointer-events: auto; }
 
 </style>
@@ -188,7 +167,7 @@ html, body{ min-height: 100%; height: 100%; }
                 <span class="variation-preview-wrapper"><i class="variation-preview" style="width:${width}%; height:${height}%;"></i></span>
                 <div class="type type--pos-medium-normal variation-resolution">
                     <input data-read="variation-width" required min="1" type="number" class="input" placeholder="Width" value="${variation.width}">
-                    <span class="ml-8 mr-8">x</span>
+                    x
                     <input data-read="variation-height" required min="1" type="number" class="input" placeholder="Height" value="${variation.height}">
                 </div>
                 <button type="button" data-trigger="remove-variation" data-stand="${standId}" data-variation="${variationId}" class="icon icon--trash icon--button action">Remove</button>
