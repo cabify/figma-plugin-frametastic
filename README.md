@@ -1,2 +1,2 @@
-# Boutique
-A figma plugin to easily duplicate your frames in multiple sizes variations. 
+# Frametastic
+Add your favorite frame sizes combinations to easily test your designs in different viewports. 
