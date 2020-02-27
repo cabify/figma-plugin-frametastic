@@ -327,8 +327,8 @@ html, body{ min-height: 100%; height: 100%; }
 
 	// Cancel import action
 	document.querySelector('[data-trigger=import-cancel]').onclick = e => {
-    	console.log('click')
 		document.querySelector('[data-node=import-form]').classList.add('hidden')
+		document.querySelector('[data-render=import-data]').value = ''
 	}
 
     // Export action
