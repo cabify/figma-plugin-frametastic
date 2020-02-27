@@ -116,20 +116,20 @@ html, body{ min-height: 100%; height: 100%; }
     </section>
 </section>
 
-<section data-node="import-form" class="view form hidden">
-    <textarea rows="12" class="textarea" placeholder="Paste here your config"></textarea>
-    <button data-trigger="import-default" class='action-link'>Import default config</button>
+<form data-node="import-form" class="view form hidden">
+    <textarea data-render="import-data" required rows="12" class="textarea" placeholder="Paste here your config"></textarea>
+    <button type="button" data-trigger="import-default" class='action-link'>Use default config</button>
 
-    <button data-trigger="import-save" class='button button--primary'>Import</button>
-    <button data-trigger="import-cancel" class='button button--secondary'>Cancel</button>
-</section>
+    <button type="submit" data-trigger="import-save" class='button button--primary'>Import</button>
+    <button type="button" data-trigger="import-cancel" class='button button--secondary'>Cancel</button>
+</form>
 
-<section data-node="export-form" class="view form boutique-export hidden">
+<form data-node="export-form" class="view form boutique-export hidden">
     <textarea readonly data-render="export-data" rows="12" class="boutique-export textarea"></textarea>
     <div class="boutique-export float-right m-8">
         <button data-trigger="export-done" class='button button--primary'>Done</button>
     </div>
-</section>
+</form>
 
 <script>
 
@@ -282,13 +282,24 @@ html, body{ min-height: 100%; height: 100%; }
 	// Import action
     document.querySelector('[data-trigger=import]').onclick = e => {
         document.querySelector('[data-node=import-form]').classList.remove('hidden')
-    	// let data = [
-        //     { name:"Riders", variations: [{width:1000, height:600}, {width:1024, height:768}, {width:1080, height:1920}, {width:120, height:600}, {width:1200, height:1200}, {width:1200, height:627}, {width:1200, height:628}, {width:1280, height:720}, {width:1456, height:180}, {width:160, height:600}, {width:168, height:28}, {width:180, height:150}, {width:200, height:200}, {width:216, height:36}, {width:250, height:250}, {width:300, height:250}, {width:300, height:50}, {width:300, height:600}, {width:320, height:100}, {width:320, height:480}, {width:320, height:50}, {width:336, height:280}, {width:360, height:640}, {width:468, height:60}, {width:468, height:90}, {width:480, height:320}, {width:580, height:480}, {width:600, height:500}, {width:640, height:100}, {width:640, height:360}, {width:640, height:480}, {width:640, height:960}, {width:728, height:90}, {width:768, height:1024}, {width:930, height:180}, {width:960, height:640}, {width:970, height:250}, {width:970, height:90} ]},
-        //     { name:"Drivers", variations: [{width:1000, height:600}, {width:1080, height:1920}, {width:120, height:600}, {width:1200, height:1200}, {width:1200, height:628}, {width:1280, height:720}, {width:160, height:600}, {width:180, height:150}, {width:200, height:200}, {width:250, height:250}, {width:300, height:250}, {width:300, height:50}, {width:300, height:600}, {width:320, height:100}, {width:320, height:480}, {width:320, height:50}, {width:336, height:280}, {width:360, height:640}, {width:468, height:90}, {width:480, height:320}, {width:640, height:360}, {width:728, height:90}, {width:930, height:180}, {width:970, height:250}, {width:970, height:90} ]},
-        //     { name:"Corporate", variations: [{width:1080, height:1920}, {width:1200, height:1200}, {width:1200, height:628}, {width:1280, height:720} ]}
-        // ]
-        // parent.postMessage({ pluginMessage: { type: 'request-import', data: JSON.stringify(data) } }, '*')
     }
+
+	// Load default config import action
+	document.querySelector('[data-trigger=import-default]').onclick = e => {
+		let config = [
+		    { name:"Riders", variations: [{width:1000, height:600}, {width:1024, height:768}, {width:1080, height:1920}, {width:120, height:600}, {width:1200, height:1200}, {width:1200, height:627}, {width:1200, height:628}, {width:1280, height:720}, {width:1456, height:180}, {width:160, height:600}, {width:168, height:28}, {width:180, height:150}, {width:200, height:200}, {width:216, height:36}, {width:250, height:250}, {width:300, height:250}, {width:300, height:50}, {width:300, height:600}, {width:320, height:100}, {width:320, height:480}, {width:320, height:50}, {width:336, height:280}, {width:360, height:640}, {width:468, height:60}, {width:468, height:90}, {width:480, height:320}, {width:580, height:480}, {width:600, height:500}, {width:640, height:100}, {width:640, height:360}, {width:640, height:480}, {width:640, height:960}, {width:728, height:90}, {width:768, height:1024}, {width:930, height:180}, {width:960, height:640}, {width:970, height:250}, {width:970, height:90} ]},
+		    { name:"Drivers", variations: [{width:1000, height:600}, {width:1080, height:1920}, {width:120, height:600}, {width:1200, height:1200}, {width:1200, height:628}, {width:1280, height:720}, {width:160, height:600}, {width:180, height:150}, {width:200, height:200}, {width:250, height:250}, {width:300, height:250}, {width:300, height:50}, {width:300, height:600}, {width:320, height:100}, {width:320, height:480}, {width:320, height:50}, {width:336, height:280}, {width:360, height:640}, {width:468, height:90}, {width:480, height:320}, {width:640, height:360}, {width:728, height:90}, {width:930, height:180}, {width:970, height:250}, {width:970, height:90} ]},
+		    { name:"Corporate", variations: [{width:1080, height:1920}, {width:1200, height:1200}, {width:1200, height:628}, {width:1280, height:720} ]}
+		]
+
+        document.querySelector('[data-render=import-data]').value = JSON.stringify(config)
+	}
+
+	// Save import action
+	document.querySelector('[data-trigger=import-save]').onclick = e => {
+		// parent.postMessage({ pluginMessage: { type: 'request-import', data: JSON.stringify(data) } }, '*')
+		// document.querySelector('[data-node=import-form]').classList.add('hidden')
+	}
 
 	// Cancel import action
 	document.querySelector('[data-trigger=import-cancel]').onclick = e => {
