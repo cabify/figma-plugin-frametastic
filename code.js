@@ -23,7 +23,7 @@ function dumpBoutique() {
 }
 
 function saveBoutique(boutique) {
-    figma.root.setPluginData('boutique', boutique)
+    figma.root.setPluginData('boutique', JSON.stringify(boutique))
 }
 
 function getSavedBoutique() {
@@ -40,21 +40,21 @@ function editStand(standId, name) {
     let boutique = getSavedBoutique()
     let stand = boutique[standId]
     stand.name = name
-    saveBoutique(JSON.stringify(boutique))
+    saveBoutique(boutique)
     return { standId, stand }
 }
 
 function editVariation(standId, variationId, width, height) {
     let boutique = getSavedBoutique()
     boutique[standId].variations[variationId] = { width: width, height: height }
-    saveBoutique(JSON.stringify(boutique))
+    saveBoutique(boutique)
     return { standId: standId, variationId: variationId, width: width, height: height }
 }
 
 function addStand(name) {
     let boutique = getSavedBoutique()
     boutique.splice(0, 0, { name, variations: [] })
-    saveBoutique(JSON.stringify(boutique))
+    saveBoutique(boutique)
     return { boutique }
 }
 
@@ -62,7 +62,7 @@ function addVariation(standId, width, height) {
     let boutique = getSavedBoutique()
     let stand = boutique[standId]
     stand.variations.splice(0, 0, { width, height })
-    saveBoutique(JSON.stringify(boutique))
+    saveBoutique(boutique)
     return { standId, stand }
 }
 
@@ -74,7 +74,7 @@ function getSavedVariation(standId, variationId) {
 function removeStand(standId) {
     let boutique = getSavedBoutique()
     let stand =  boutique.splice(standId, 1)
-    saveBoutique(JSON.stringify(boutique))
+    saveBoutique(boutique)
     return boutique
 }
 
@@ -82,7 +82,7 @@ function removeVariation(standId, variationId) {
     let boutique = getSavedBoutique()
     let stand =  boutique[standId]
     stand.variations.splice(variationId, 1)
-    saveBoutique(JSON.stringify(boutique))
+    saveBoutique(boutique)
     return {standId, stand }
 }
 
@@ -133,7 +133,7 @@ figma.ui.onmessage = msg => {
     }
 
     if (msg.type === 'request-dump') {
-        saveBoutique('')
+        saveBoutique([])
         renderFromSavedState()
     }
 
