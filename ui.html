@@ -54,9 +54,10 @@ html, body{ min-height: 100%; height: 100%; }
         .import-error { color: #f24822; margin-top: 24px; display: inline-block; }
 
     /* Empty state */
-    .empty-state { text-align: center; display: flex; justify-content: center; align-items: center; flex-direction: column; }
+    .empty-state { padding-top: 24px; text-align: center; display: flex; justify-content: top; align-items: center; flex-direction: column; }
     .empty-state h1 { margin-bottom: 4px; }
     .empty-state p { padding: 0 32px; margin-bottom: 16px; }
+    .empty-state .disclaimer { position: absolute; left: 0; right: 0; bottom: 0px; color: #9A9A9A; }
 
 
     /* Stands and variations */
@@ -100,7 +101,7 @@ html, body{ min-height: 100%; height: 100%; }
     <section class="actions">
         <button data-trigger="import" class="icon icon--align-bottom icon--button action-labeled import">Import</button>
         <button data-trigger="export" class="icon icon--align-top icon--button action-labeled export">Export</button>
-        <button data-trigger="add-stand" class="icon icon--plus icon--button action-labeled stand-add">Add stand</button>
+        <button data-trigger="add-stand" class="icon icon--plus icon--button action-labeled stand-add">Add combination</button>
     </section>
 
     <button data-trigger="dump" class="icon icon--trash icon--button action dump hidden">Remove all</button>
@@ -110,13 +111,16 @@ html, body{ min-height: 100%; height: 100%; }
         <h1 class="type type--pos-large-bold">
             Welcome to <strong>Frametastic</strong>
         </h1>
-        <p class="type type--pos-small-normal">
-            Create your favorite frame sizes combinations to easily test your desgins in different viewports.
+        <p class="type type--pos-medium-normal">
+            Add your favorite frame sizes combinations to easily test your designs in different viewports.
         </p>
         <section>
-            <button data-trigger="add-stand" class="button button--primary">Create combination</button>
+            <button data-trigger="add-stand" class="button button--primary">Add combination</button>
             <button data-trigger="import" class="button button--secondary">Import config</button>
         </section>
+        <p class="type type--pos-small-normal disclaimer">
+            All your combinations are automatically saved in the current file. Anyone using the same file will have access to the same combinations.
+        </p>
     </section>
 </section>
 
