@@ -4,18 +4,31 @@ const X_SPACING = 100
 function createStand(node, id) {
     let stand = getSavedStand(id)
     let offset = 0
+    let bufferNodes = []
     stand.variations.forEach((variation, index) => {
-        createVariation(node, variation.width, variation.height, offset)
+        let newNode = createVariation(node, variation.width, variation.height, offset)
         offset += variation.width + X_SPACING
+        bufferNodes.push(newNode)
     })
+
+    return bufferNodes
 }
 
 function createVariation(node, width, height, offset) {
-    let clone = (node.type === 'COMPONENT') ? node.createInstance() : node.clone();
-    clone.resize(width, height)
-    clone.name = `${clone.name}-${width}x${height}`;
-    clone.x = node.x + node.width + X_SPACING + (offset || 0)
-    clone.y = node.y
+    let newNode
+    if (node) {
+        newNode = (node.type === 'COMPONENT') ? node.createInstance() : node.clone();
+        newNode.name = `${node.name}-${width}x${height}`;
+        newNode.x = node.x + node.width + X_SPACING + (offset || 0)
+        newNode.y = node.y
+    } else {
+        newNode = figma.createFrame()
+        newNode.x = figma.viewport.bounds.x + (figma.viewport.bounds.width/2) + X_SPACING + (offset || 0)
+        newNode.y = figma.viewport.bounds.y + (figma.viewport.bounds.height/2)
+    }
+    newNode.resize(width, height)
+
+    return newNode
 }
 
 function dumpBoutique() {
@@ -106,18 +119,30 @@ figma.ui.onmessage = msg => {
 
     if (msg.type === 'run-stand') {
         let source = figma.currentPage.selection
-        source.forEach(node => {
-            createStand(node, msg.standId)
-        })
+        if (source.length == 0) {
+            let newNodes = createStand(null, msg.standId)
+            figma.currentPage.selection = newNodes
+            figma.viewport.scrollAndZoomIntoView(figma.currentPage.selection)
+        } else {
+            source.forEach(node => {
+                createStand(node, msg.standId)
+            })
+        }
         figma.notify('🕺 Frametastic!')
     }
 
     if (msg.type === 'run-variation') {
         let source = figma.currentPage.selection
         let variation = getSavedVariation(msg.standId, msg.variationId)
-        source.forEach(node => {
-            createVariation(node, variation.width, variation.height)
-        })
+        if (source.length == 0) {
+            let newNode = createVariation(null, variation.width, variation.height)
+            figma.currentPage.selection = [newNode]
+            figma.viewport.scrollAndZoomIntoView(figma.currentPage.selection)
+        } else {
+            source.forEach(node => {
+                createVariation(node, variation.width, variation.height)
+            })
+        }
         figma.notify('🕺 Frametastic!')
     }
 
