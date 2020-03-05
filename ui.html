@@ -79,7 +79,7 @@ html, body{ min-height: 100%; height: 100%; }
     <section class="actions">
         <button data-trigger="import" class="icon icon--align-bottom icon--button action-labeled import">Import</button>
         <button data-trigger="export" class="icon icon--align-top icon--button action-labeled export">Export</button>
-        <button data-trigger="add-stand" class="icon icon--plus icon--button action-labeled stand-add">Add combination</button>
+        <button data-trigger="add-stand" class="icon icon--plus icon--button action-labeled stand-add">New combination</button>
     </section>
 
     <button data-trigger="dump" class="icon icon--trash icon--button action dump hidden">Remove all</button>
@@ -93,7 +93,7 @@ html, body{ min-height: 100%; height: 100%; }
             Add your favorite frame sizes combinations to easily test your designs in different viewports.
         </p>
         <section>
-            <button data-trigger="add-stand" class="button button--primary">Add combination</button>
+            <button data-trigger="add-stand" class="button button--primary">New combination</button>
             <button data-trigger="import" class="button button--secondary">Import config</button>
         </section>
         <p class="type type--pos-small-normal disclaimer">
@@ -169,8 +169,8 @@ html, body{ min-height: 100%; height: 100%; }
                     x
                     <input data-read="variation-height" required min="1" type="number" class="input" placeholder="Height" value="${variation.height}">
                 </div>
-                <button type="button" data-trigger="remove-variation" data-stand="${standId}" data-variation="${variationId}" class="icon icon--trash icon--button action">Remove</button>
-                <button type="submit" class="icon icon--resolve icon--button action">Done</button>
+                <button type="button" title="Remove size" data-trigger="remove-variation" data-stand="${standId}" data-variation="${variationId}" class="icon icon--trash icon--button action">Remove</button>
+                <button type="submit" title="Save size" class="icon icon--resolve icon--button action">Done</button>
             </form>
         </li>
         `
@@ -188,17 +188,17 @@ html, body{ min-height: 100%; height: 100%; }
                     ${stand.name}
                     <span class="stand-empty ${showEmptyState}"> · Empty combination</span>
                 </em>
-                <button data-trigger="add-variation" data-stand="${standId}" class="icon icon--plus icon--button action variation-add">Done</button>
-                <button data-trigger="edit-stand" data-stand="${standId}" class="icon icon--adjust icon--button action stand-edit">Edit</button>
+                <button data-trigger="add-variation" title="New size" data-stand="${standId}" class="icon icon--plus icon--button action variation-add">New</button>
+                <button data-trigger="edit-stand" title="Edit combination" data-stand="${standId}" class="icon icon--adjust icon--button action stand-edit">Edit</button>
 
                  <form data-trigger="submit-stand" data-node="stand-edit" data-stand="${standId}" class="stand-header edit hidden">
                     <input data-read="stand-name" required type="text" class="input" placeholder="Write a name" value="${stand.name}">
-                    <button type="button" data-trigger="remove-stand" data-stand="${standId}" class="icon icon--trash icon--button action">Remove</button>
-                    <button type="submit" class="icon icon--resolve icon--button action">Done</button>
+                    <button type="button" title="Remove combination" data-trigger="remove-stand" data-stand="${standId}" class="icon icon--trash icon--button action">Remove</button>
+                    <button type="submit" title="Save combination" class="icon icon--resolve icon--button action">Done</button>
                 </form>
             </div>
             <div class="disclosure__content">
-                <button class="type--pos-medium-normal variation-item stand-run ${hiddenRunAll}" data-trigger="run-stand" data-stand="${standId}">Run all variations</button>
+                <button class="type--pos-medium-normal variation-item stand-run ${hiddenRunAll}" data-trigger="run-stand" data-stand="${standId}">Run all sizes</button>
                 <ul data-node="variations" class="variations">
                     ${variations}
                 </ul>
