@@ -6,7 +6,7 @@ function createStand(node, id) {
     let offset = 0
     let bufferNodes = []
     stand.variations.forEach((variation, index) => {
-        let newNode = createVariation(node, variation.width, variation.height, offset)
+        let newNode = createVariation(node, variation, offset)
         offset += variation.width + X_SPACING
         bufferNodes.push(newNode)
     })
@@ -14,18 +14,21 @@ function createStand(node, id) {
     return bufferNodes
 }
 
-function createVariation(node, width, height, offset) {
+function createVariation(node, variation, offset) {
     let newNode
+    let {width, height, name} = variation
     if (node) {
         newNode = (node.type === 'COMPONENT') ? node.createInstance() : node.clone();
-        newNode.name = `${node.name}-${width}x${height}`;
+        newNode.name = (name) ? `${node.name}-${name}` : `${node.name}-${width}x${height}`;
         newNode.x = node.x + node.width + X_SPACING + (offset || 0)
         newNode.y = node.y
     } else {
         newNode = figma.createFrame()
+        if (name) newNode.name = name
         newNode.x = figma.viewport.bounds.x + (figma.viewport.bounds.width/2) + X_SPACING + (offset || 0)
         newNode.y = figma.viewport.bounds.y + (figma.viewport.bounds.height/2)
     }
+
     newNode.resize(width, height)
 
     return newNode
@@ -135,12 +138,12 @@ figma.ui.onmessage = msg => {
         let source = figma.currentPage.selection
         let variation = getSavedVariation(msg.standId, msg.variationId)
         if (source.length == 0) {
-            let newNode = createVariation(null, variation.width, variation.height)
+            let newNode = createVariation(null, variation)
             figma.currentPage.selection = [newNode]
             figma.viewport.scrollAndZoomIntoView(figma.currentPage.selection)
         } else {
             source.forEach(node => {
-                createVariation(node, variation.width, variation.height)
+                createVariation(node, variation)
             })
         }
         figma.notify('🕺 Frametastic!')
