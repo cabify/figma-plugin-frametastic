@@ -1,5 +1,5 @@
 # Frametastic
-Easily test your design in different viewports by saving your favorite frame sizes combinations to use them in new frames or to duplicate your current selection.
+Easily test your design in different viewports by saving your favorite frame sizes combinations. Use any combination for new frames or for duplicating your current selection. 
 
 1. Make your design
 2. Add the needed constrains
