@@ -20,13 +20,13 @@ function createVariation(node, variation, offset) {
     if (node) {
         newNode = (node.type === 'COMPONENT') ? node.createInstance() : node.clone();
         newNode.name = (name) ? `${node.name}-${name}` : `${node.name}-${width}x${height}`;
-        newNode.x = node.x + node.width + X_SPACING + (offset || 0)
-        newNode.y = node.y
+        newNode.x = Math.round(node.x + node.width + X_SPACING + (offset || 0))
+        newNode.y = Math.round(node.y)
     } else {
         newNode = figma.createFrame()
         if (name) newNode.name = name
-        newNode.x = figma.viewport.bounds.x + (figma.viewport.bounds.width/2) + X_SPACING + (offset || 0)
-        newNode.y = figma.viewport.bounds.y + (figma.viewport.bounds.height/2)
+        newNode.x = Math.round(figma.viewport.bounds.x + (figma.viewport.bounds.width/2) + X_SPACING + (offset || 0))
+        newNode.y = Math.round(figma.viewport.bounds.y + (figma.viewport.bounds.height/2))
     }
 
     newNode.resize(width, height)
