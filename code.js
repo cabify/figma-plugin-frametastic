@@ -1,8 +1,8 @@
 const X_SPACING = 100
 
 // core functions
-function createStand(node, id) {
-    let stand = getSavedStand(id)
+async function createStand(node, id) {
+    let stand = await getSavedStand(id)
     let offset = 0
     let bufferNodes = []
     stand.variations.forEach((variation, index) => {
@@ -35,75 +35,81 @@ function createVariation(node, variation, offset) {
 }
 
 function dumpBoutique() {
-    figma.root.setPluginData('boutique', '')
+    figma.clientStorage.setAsync('boutique', []).catch(err => { console.log('error dumping data') })
 }
 
 function saveBoutique(boutique) {
-    figma.root.setPluginData('boutique', JSON.stringify(boutique))
+    figma.clientStorage.setAsync('boutique', JSON.stringify(boutique)).catch(err => { console.log('error setting data') })
 }
 
 function getSavedBoutique() {
-    let boutique = figma.root.getPluginData('boutique');
-    return (boutique === '') ? [] : JSON.parse(boutique);
+    return new Promise((success, error) => {
+        figma.clientStorage.getAsync('boutique').then(boutique => {
+            let data = (boutique) ? JSON.parse(boutique) : [] ;
+            success(data)
+        }).catch(err => {
+            error(err)
+        })
+    })
 }
 
-function getSavedStand(standId) {
-    let boutique = getSavedBoutique()
+async function getSavedStand(standId) {
+    let boutique = await getSavedBoutique()
     return boutique[standId]
 }
 
-function editStand(standId, name) {
-    let boutique = getSavedBoutique()
+async function editStand(standId, name) {
+    let boutique = await getSavedBoutique()
     let stand = boutique[standId]
     stand.name = name
     saveBoutique(boutique)
     return { standId, stand }
 }
 
-function editVariation(standId, variationId, width, height) {
-    let boutique = getSavedBoutique()
+async function editVariation(standId, variationId, width, height) {
+    let boutique = await getSavedBoutique()
     boutique[standId].variations[variationId] = { width: width, height: height }
     saveBoutique(boutique)
     return { standId: standId, variationId: variationId, width: width, height: height }
 }
 
-function addStand(name) {
-    let boutique = getSavedBoutique()
+async function addStand(name) {
+    let boutique = await getSavedBoutique()
     boutique.splice(0, 0, { name, variations: [] })
     saveBoutique(boutique)
     return { boutique }
 }
 
-function addVariation(standId, width, height) {
-    let boutique = getSavedBoutique()
+async function addVariation(standId, width, height) {
+    let boutique = await getSavedBoutique()
     let stand = boutique[standId]
     stand.variations.splice(0, 0, { width, height })
     saveBoutique(boutique)
     return { standId, stand }
 }
 
-function getSavedVariation(standId, variationId) {
-    let stand = getSavedStand(standId)
+async function getSavedVariation(standId, variationId) {
+    let stand = await getSavedStand(standId)
     return stand.variations[variationId]
 }
 
-function removeStand(standId) {
-    let boutique = getSavedBoutique()
+async function removeStand(standId) {
+    let boutique = await getSavedBoutique()
     let stand =  boutique.splice(standId, 1)
     saveBoutique(boutique)
     return boutique
 }
 
-function removeVariation(standId, variationId) {
-    let boutique = getSavedBoutique()
+async function removeVariation(standId, variationId) {
+    let boutique = await getSavedBoutique()
     let stand =  boutique[standId]
     stand.variations.splice(variationId, 1)
     saveBoutique(boutique)
     return {standId, stand }
 }
 
-function renderFromSavedState() {
-    var boutique = getSavedBoutique()
+async function renderFromSavedState() {
+    var boutique = await getSavedBoutique()
     if (boutique.length === 0) {
         figma.ui.postMessage({ type: 'empty' })
     } else {
@@ -121,32 +127,36 @@ renderFromSavedState()
 figma.ui.onmessage = msg => {
 
     if (msg.type === 'run-stand') {
-        let source = figma.currentPage.selection
-        if (source.length == 0) {
-            let newNodes = createStand(null, msg.standId)
-            figma.currentPage.selection = newNodes
-            figma.viewport.scrollAndZoomIntoView(figma.currentPage.selection)
-        } else {
-            source.forEach(node => {
-                createStand(node, msg.standId)
-            })
-        }
-        figma.notify('🕺 Frametastic!')
+        (async function() {
+            let source = figma.currentPage.selection
+            if (source.length == 0) {
+                let newNodes = await createStand(null, msg.standId)
+                figma.currentPage.selection = newNodes
+                figma.viewport.scrollAndZoomIntoView(figma.currentPage.selection)
+            } else {
+                source.forEach(node => {
+                    createStand(node, msg.standId)
+                })
+            }
+            figma.notify('Frametastic!')
+        })()
     }
 
     if (msg.type === 'run-variation') {
-        let source = figma.currentPage.selection
-        let variation = getSavedVariation(msg.standId, msg.variationId)
-        if (source.length == 0) {
-            let newNode = createVariation(null, variation)
-            figma.currentPage.selection = [newNode]
-            figma.viewport.scrollAndZoomIntoView(figma.currentPage.selection)
-        } else {
-            source.forEach(node => {
-                createVariation(node, variation)
-            })
-        }
-        figma.notify('🕺 Frametastic!')
+        (async function() {
+            let source = figma.currentPage.selection
+            let variation = await getSavedVariation(msg.standId, msg.variationId)
+            if (source.length == 0) {
+                let newNode = createVariation(null, variation)
+                figma.currentPage.selection = [newNode]
+                figma.viewport.scrollAndZoomIntoView(figma.currentPage.selection)
+            } else {
+                source.forEach(node => {
+                    createVariation(node, variation)
+                })
+            }
+            figma.notify('Frametastic!')
+        })()
     }
 
     if (msg.type === 'request-import') {
@@ -156,8 +166,9 @@ figma.ui.onmessage = msg => {
     }
 
     if (msg.type === 'request-export') {
-        let boutique = getSavedBoutique()
-        figma.ui.postMessage({ type: 'export-data', data: boutique })
+        getSavedBoutique().then(boutique => {
+            figma.ui.postMessage({ type: 'export-data', data: boutique })
+        })
     }
 
     if (msg.type === 'request-dump') {
@@ -166,33 +177,45 @@ figma.ui.onmessage = msg => {
     }
 
     if (msg.type === 'remove-stand') {
-        let boutique = removeStand(msg.standId)
-        renderFromSavedState()
+        (async function() {
+            let boutique = await removeStand(msg.standId)
+            renderFromSavedState()
+        })()
     }
 
     if (msg.type === 'remove-variation') {
-        let {standId, stand} = removeVariation(msg.standId, msg.variationId)
-        figma.ui.postMessage({ type: 'removed-variation', standId, stand })
+        (async function() {
+            let {standId, stand} = await removeVariation(msg.standId, msg.variationId)
+            figma.ui.postMessage({ type: 'removed-variation', standId, stand })
+        })()
     }
 
     if (msg.type === 'edit-stand') {
-        let { standId, stand } = editStand(msg.standId,msg.name)
-        figma.ui.postMessage({ type: 'edited-stand', standId, stand })
+        (async function() {
+            let { standId, stand } = await editStand(msg.standId, msg.name)
+            figma.ui.postMessage({ type: 'edited-stand', standId, stand })
+        })()
     }
 
     if (msg.type === 'edit-variation') {
-        let variation = editVariation(msg.standId, msg.variationId, msg.width, msg.height)
-        figma.ui.postMessage({ type: 'edited-variation', variation })
+        (async function() {
+            let variation = await editVariation(msg.standId, msg.variationId, msg.width, msg.height)
+            figma.ui.postMessage({ type: 'edited-variation', variation })
+        })()
     }
 
     if (msg.type === 'add-stand') {
-        let boutique = addStand(msg.name)
-        renderFromSavedState()
+        (async function() {
+            let boutique = await addStand(msg.name)
+            renderFromSavedState()
+        })()
     }
 
     if (msg.type === 'add-variation') {
-        let {standId, stand} = addVariation(msg.standId, msg.width, msg.height)
-        figma.ui.postMessage({ type: 'added-variation', standId, stand })
+        (async function() {
+            let {standId, stand} = await addVariation(msg.standId, msg.width, msg.height)
+            figma.ui.postMessage({ type: 'added-variation', standId, stand })
+        })()
     }
 
     // figma.closePlugin();

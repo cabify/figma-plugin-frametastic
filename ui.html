@@ -25,6 +25,7 @@ html, body{ min-height: 100%; height: 100%; }
 
     .actions { display: flex; align-items: center; justify-content: center; padding: 8px; border-bottom: solid 1px rgba(0, 0, 0, 0.1); }
         .actions .action-labeled { flex-grow: 1; }
+        .actions .disabled { opacity: 0.4; pointer-events: none; }
 
     /* Import form */
     .import .secondary { position: absolute; left: 16px; right: 16px; bottom: 16px; border-top: solid 1px rgba(0, 0, 0, 0.1); padding-top: 16px; }
@@ -99,7 +100,7 @@ html, body{ min-height: 100%; height: 100%; }
             <button data-trigger="import" class="button button--secondary">Import config</button>
         </section>
         <p class="type type--pos-small-normal disclaimer">
-            All your combinations are automatically saved in the current file. Anyone using the same file will have access to the same combinations.
+            All your combinations are automatically saved in your account. Share your configuration with other people by using the export option.
         </p>
     </section>
 </section>
@@ -225,12 +226,14 @@ html, body{ min-height: 100%; height: 100%; }
                 standsBuffer += standTemplate(standId, stand, variationsBuffer)
             })
             document.querySelector('[data-render=stands]').innerHTML = standsBuffer
-        }
+			document.querySelector('[data-trigger="export"]').classList.remove('disabled')
+		}
 
 		// Empty state render
 		if (msg.type === 'empty') {
 			document.querySelector('[data-node="empty-state"]').classList.remove('hidden')
 			document.querySelector('[data-render=stands]').innerHTML = ''
+			document.querySelector('[data-trigger="export"]').classList.add('disabled')
 		}
 
         // Re-render just the stand name
