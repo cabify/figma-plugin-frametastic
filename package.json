@@ -1,0 +1,11 @@
+{
+  "name": "figma-plugin-frametastic",
+  "version": "1.0.0",
+  "scripts": {
+    "stats": "node ./stats.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "dependencies": {
+    "figma-plugins-stats": "0.0.12"
+  }
+}
