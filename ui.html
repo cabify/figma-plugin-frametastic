@@ -15,10 +15,10 @@ html, body{ min-height: 100%; height: 100%; }
     .disclosure__content { padding-top: 0; padding-bottom: 0; }
 
     /* Generic actions */
-    .action { font-size: 0; line-height: 0; }
-    .action-labeled { width: auto; padding: 0 8px 0 32px; text-align: left; }
+    .action { font-size: 0; line-height: 0; background-color: transparent; }
+    .action-labeled { width: auto; padding: 0 8px 0 32px; text-align: left; background-color: transparent; }
 
-    .action-link { padding: 0; display: inline-block; color: #18a0fb; }
+    .action-link { padding: 0; display: inline-block; color: #18a0fb; background-color: transparent; }
     .action-link:hover { text-decoration: underline; cursor: pointer; }
     .action-link:focus { outline: 0; }
     .action-link:active { color: rgba(24, 160, 251, 0.8); }
@@ -79,9 +79,9 @@ html, body{ min-height: 100%; height: 100%; }
 
 <section data-node="boutique" class="view boutique">
     <section class="actions">
-        <button data-trigger="import" class="icon icon--align-bottom icon--button action-labeled import">Import</button>
-        <button data-trigger="export" class="icon icon--align-top icon--button action-labeled export">Export</button>
-        <button data-trigger="add-stand" class="icon icon--plus icon--button action-labeled stand-add">New combination</button>
+        <button data-trigger="import" class="type--pos-medium-medium icon icon--align-bottom icon--button action-labeled import">Import</button>
+        <button data-trigger="export" class="type--pos-medium-medium icon icon--align-top icon--button action-labeled export">Export</button>
+        <button data-trigger="add-stand" class="type--pos-medium-medium icon icon--plus icon--button action-labeled stand-add">New combination</button>
     </section>
 
     <button data-trigger="dump" class="icon icon--trash icon--button action dump hidden">Remove all</button>
