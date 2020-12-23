@@ -37,6 +37,8 @@ html, body{ min-height: 100%; height: 100%; }
     .empty-state .logo { width: 48px; height: 48px; border-radius: 48px; margin-bottom: 8px; }
     .empty-state h1 { margin-bottom: 4px; }
     .empty-state p { padding: 0 32px; margin-bottom: 16px; }
+    .empty-state section { padding: 0 48px; }
+    .empty-state button { width: 100%; margin-bottom: 8px; }
     .empty-state .disclaimer { position: absolute; left: 0; right: 0; bottom: 0px; color: #9A9A9A; }
 
     /* Stands and variations */
@@ -96,11 +98,12 @@ html, body{ min-height: 100%; height: 100%; }
             Add your favorite frame sizes combinations to easily test your designs in different viewports.
         </p>
         <section>
-            <button data-trigger="add-stand" class="button button--primary">New combination</button>
+            <button data-trigger="add-defaults" class="button button--primary">Get started with defaults</button>
+            <button data-trigger="add-stand" class="button button--secondary">Start from scratch</button>
             <button data-trigger="import" class="button button--secondary">Import config</button>
         </section>
         <p class="type type--pos-small-normal disclaimer">
-            All your combinations are automatically saved in your account. Share your configuration with other people by using the export option.
+            All your combinations are automatically saved in your Figma account. Share your configuration with other people by using the export option.
         </p>
     </section>
 </section>
@@ -210,7 +213,9 @@ html, body{ min-height: 100%; height: 100%; }
         `
     }
 
-
+    
+    const defaultConfig = [{name:"Paper Sizes",variations:[{width:2384,height:3370,name:"A0"},{width:1684,height:2384,name:"A1"},{width:1190,height:1684,name:"A2"},{width:842,height:1190,name:"A3"},{width:595,height:842,name:"A4 "},{width:420,height:595,name:"A5"},{width:297,height:420,name:"A6"},{width:210,height:297,name:"A7"},{width:148,height:210,name:"A8"},{width:105,height:148,name:"A9"},{width:74,height:105,name:"A10"}]},{name:"iPhone Devices",variations:[{width:375,height:667,name:"iPhone 8"},{width:414,height:736,name:"iPhone 8 Plus"},{width:375,height:812,name:"iPhone 11 Pro / X"},{width:414,height:896,name:"iPhone 11 Pro Max"},{width:320,height:568,name:"iPhone SE"}]},{name:"Android Devices",variations:[{width:360,height:640,name:"Android"},{width:411,height:731,name:"Google Pixel 2"},{width:411,height:823,name:"Google Pixel 2 XL"}]},{name:"Google Play App Detail",variations:[{width:512,height:512,name:"Icon"}, {width:1024,height:500,name:"Feature Graphic"}, {width:1080,height:2484,name:"Portrait"}, {width:2484,height:1080,name:"Landscape"}]},{name:"App Store App Detail",variations:[{width:1242,height:2208,name:"iPhone 5.5 inch"},{width:1242,height:2688,name:"iPhone 6.5 inch"}]}]
+    
     // Listen to messages from code.js
     onmessage = e => {
         let msg = event.data.pluginMessage
@@ -274,12 +279,16 @@ html, body{ min-height: 100%; height: 100%; }
 
 	// Prevent import submit
 	document.querySelector('[data-node=import-form]').onsubmit = e => e.preventDefault()
-
+    
+    // Start with default config action
+    document.querySelector('[data-trigger=add-defaults]').onclick = e => {
+       parent.postMessage({ pluginMessage: { type: 'request-import', data: defaultConfig } }, '*')
+    }
+    
 	// Load default config import action
 	document.querySelector('[data-trigger=import-default]').onclick = e => {
-		let config = [{name:"Paper Sizes",variations:[{width:2384,height:3370,name:"A0"},{width:1684,height:2384,name:"A1"},{width:1190,height:1684,name:"A2"},{width:842,height:1190,name:"A3"},{width:595,height:842,name:"A4 "},{width:420,height:595,name:"A5"},{width:297,height:420,name:"A6"},{width:210,height:297,name:"A7"},{width:148,height:210,name:"A8"},{width:105,height:148,name:"A9"},{width:74,height:105,name:"A10"}]},{name:"iPhone Devices",variations:[{width:375,height:667,name:"iPhone 8"},{width:414,height:736,name:"iPhone 8 Plus"},{width:375,height:812,name:"iPhone 11 Pro / X"},{width:414,height:896,name:"iPhone 11 Pro Max"},{width:320,height:568,name:"iPhone SE"}]},{name:"Android Devices",variations:[{width:360,height:640,name:"Android"},{width:411,height:731,name:"Google Pixel 2"},{width:411,height:823,name:"Google Pixel 2 XL"}]},{name:"Google Play App Detail",variations:[{width:512,height:512,name:"Icon"}, {width:1024,height:500,name:"Feature Graphic"}, {width:1080,height:2484,name:"Portrait"}, {width:2484,height:1080,name:"Landscape"}]},{name:"App Store App Detail",variations:[{width:1242,height:2208,name:"iPhone 5.5 inch"},{width:1242,height:2688,name:"iPhone 6.5 inch"}]}]
 		document.querySelector('[data-node=import-error]').classList.add('hidden')
-		document.querySelector('[data-render=import-data]').value = JSON.stringify(config)
+		document.querySelector('[data-render=import-data]').value = JSON.stringify(defaultConfig)
 	}
 
     // Hide import error on focus
